@@ -9,18 +9,29 @@
 <body>
     <div class="container">
         <h1>Global Temperature Tracker</h1>
-        <div>
-            <B><input type="text" id="city1" placeholder="ENTER FIRST CITY"></B>
-            <B><input type="text" id="city2" placeholder="ENTER SECOND CITY"></B>
-            <button onclick="compareTemperatures()">Compare Temperatures</button>
+        <div class="input-section">
+            <input type="text" id="city1" placeholder="Enter First City">
+            <input type="text" id="city2" placeholder="Enter Second City">
+            <button onclick="compareTemperatures()"><b>Compare</b></button>
         </div>
-        <div id="results"></div>
-        <div id="satellite-images">
-            <div id="image1"></div>
-            <div id="image2"></div>
+        <div class="results-section">
+            <div id="city1-result" class="city-result"></div>
+            <div id="city2-result" class="city-result"></div>
+            <div id="comparison-result" class="comparison-result"></div>
+        </div>
+        <div id="predefined-cities">
+            <h3>Temperatures of Cities around the World </h3>
+            <table id="city-temperatures">
+                <thead>
+                    <tr>
+                        <th>City</th>
+                        <th>Temperature (°C)</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
         </div>
     </div>
     <script src="script.js"></script>
 </body>
 </html>
-

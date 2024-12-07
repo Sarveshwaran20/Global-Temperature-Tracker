@@ -1,61 +1,105 @@
 body {
     font-family: Arial, sans-serif;
-    background-color: #f0f0f0;
+    background-color: #e0f7fa;
     margin: 0;
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100vh;
+    text-align: center;
 }
 
 .container {
-    text-align: center;
     background-color: white;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    max-width: 700px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+h1 {
+    font-size: 28px;
+    color: #00796b;
+    margin-bottom: 20px;
+}
+
+.input-section {
+    margin-bottom: 20px;
 }
 
 input {
     padding: 10px;
-    margin-right: 10px;
-    border-radius: 4px;
+    margin: 5px;
+    border-radius: 6px;
     border: 1px solid #ccc;
+    width: 40%;
+    font-size: 16px;
 }
 
 button {
     padding: 10px 20px;
-    border: none;
-    border-radius: 4px;
-    background-color: #28a745;
-    color: rgb(255, 255, 255);
+    border-radius: 6px;
+    background-color: #00796b;
+    color: white;
     cursor: pointer;
 }
 
 button:hover {
-    background-color: #218838;
+    background-color: #004d40;
 }
 
-#results {
-    margin-top: 20px;
+.results-section {
+    margin: 20px 0;
+}
+
+.city-result, .comparison-result {
     font-size: 18px;
+    margin: 10px 0;
+}
+
+.comparison-result {
     font-weight: bold;
-    text-align: left;
+    color: #d84315;
 }
 
-#satellite-images {
+#predefined-cities {
     margin-top: 20px;
-    display: flex;
-    justify-content: space-around;
-}
-
-#satellite-images div {
-    width: 300px;
-    height: 200px;
-}
-
-img {
+    max-height: 300px;
+    overflow-y: auto;
     width: 100%;
-    height: 100%;
-    border-radius: 8px;
+}
+
+#predefined-cities h3 {
+    margin-bottom: 15px;
+    font-size: 22px;
+    color: #004d40;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 0 auto;
+}
+
+th, td {
+    border: 1px solid #ccc;
+    padding: 10px;
+    text-align: center;
+}
+
+th {
+    background-color: #00796b;
+    color: white;
+}
+
+tbody tr:nth-child(odd) {
+    background-color: #f0f0f0;
+}
+
+tbody tr:nth-child(even) {
+    background-color: #ffffff;
 }
