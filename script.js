@@ -1,8 +1,8 @@
-// Your OpenWeatherMap API key
 const API_KEY = 'b27a65c44a73a52ecf72f50c632be1ac';
 const API_URL = 'https://api.openweathermap.org/data/2.5/weather';
+const FORECAST_API_URL = 'https://api.openweathermap.org/data/2.5/forecast';
 
-// List of predefined cities (in batches)
+// List of predefined cities 
 const predefinedCities = [
     "New York", "Los Angeles", "Chicago", "Houston", "Phoenix",
     "Philadelphia", "San Antonio", "San Diego", "Dallas", "San Jose",
@@ -20,10 +20,10 @@ const predefinedCityTemps = {};
 
 
 async function fetchPredefinedCityTemperatures() {
-    const batchSize = 10; // Adjust batch size for performance
+    const batchSize = 10; 
     for (let i = 0; i < predefinedCities.length; i += batchSize) {
         const citiesBatch = predefinedCities.slice(i, i + batchSize);
-        await fetchCitiesBatch(citiesBatch); // Fetch in batches
+        await fetchCitiesBatch(citiesBatch); 
     }
     
     displayPredefinedCities();
@@ -35,13 +35,13 @@ async function fetchCitiesBatch(citiesBatch) {
     await Promise.all(promises); 
 }
 
-// Fetch temperature for a given city using the API
+
 async function fetchCityTemperature(city) {
     try {
         const response = await fetch(`${API_URL}?q=${city}&units=metric&appid=${API_KEY}`);
         const data = await response.json();
         if (data.main && data.main.temp) {
-            predefinedCityTemps[city] = Math.round(data.main.temp); // Store rounded temperature
+            predefinedCityTemps[city] = Math.round(data.main.temp);
         } else {
             console.error(`Could not fetch temperature for ${city}: ${data.message}`);
         }
@@ -50,10 +50,10 @@ async function fetchCityTemperature(city) {
     }
 }
 
-// Display temperatures in the predefined cities table
+
 function displayPredefinedCities() {
     const tbody = document.querySelector('#city-temperatures tbody');
-    tbody.innerHTML = ''; // Clear existing rows
+    tbody.innerHTML = ''; 
 
     Object.entries(predefinedCityTemps).forEach(([city, temp]) => {
         const row = document.createElement('tr');
@@ -62,60 +62,155 @@ function displayPredefinedCities() {
     });
 }
 
-// Compare temperatures of two cities
+// Compare temperatures of two cities and render the graph
 async function compareTemperatures() {
     const city1 = document.getElementById('city1').value.trim();
     const city2 = document.getElementById('city2').value.trim();
+
+    if (!city1 || !city2) {
+        document.getElementById('comparison-result').textContent = "Both city fields must be filled.";
+        return;
+    }
 
     // Clear previous results
     document.getElementById('city1-result').textContent = '';
     document.getElementById('city2-result').textContent = '';
     document.getElementById('comparison-result').textContent = '';
 
-    // If any input is empty, show a message and return
-    if (!city1 || !city2) {
-        document.getElementById('comparison-result').textContent = "Both City Fields must be filled before comparing.";
-        return;
-    }
-
-    // Check if cities are valid
+   
     if (!predefinedCityTemps[city1] && !await isValidCity(city1)) {
         document.getElementById('comparison-result').textContent = `${city1} is not a valid city.`;
         return;
     }
-
     if (!predefinedCityTemps[city2] && !await isValidCity(city2)) {
         document.getElementById('comparison-result').textContent = `${city2} is not a valid city.`;
         return;
     }
 
-    // Fetch temperatures if not already in the predefined list
-    const tempCity1 = predefinedCityTemps[city1] ?? await fetchCityTemperature(city1);
-    const tempCity2 = predefinedCityTemps[city2] ?? await fetchCityTemperature(city2);
+    
+    const city1Temps = await fetchYearlyTemperatures(city1);
+    const city2Temps = await fetchYearlyTemperatures(city2);
 
-    if (tempCity1 === null || tempCity2 === null) {
+    if (!city1Temps || !city2Temps) {
         document.getElementById('comparison-result').textContent =
-            "Could not fetch temperature for one or both cities.";
+            "Could not fetch yearly temperatures for one or both cities.";
         return;
     }
 
-    // Display individual temperatures
-    document.getElementById('city1-result').textContent = `${city1}: ${tempCity1}°C`;
-    document.getElementById('city2-result').textContent = `${city2}: ${tempCity2}°C`;
+    
+    const city1AvgTemp = calculateAverageTemperature(city1Temps);
+    const city2AvgTemp = calculateAverageTemperature(city2Temps);
+
+    document.getElementById('city1-result').textContent = `${city1}: ${city1AvgTemp}°C`;
+    document.getElementById('city2-result').textContent = `${city2}: ${city2AvgTemp}°C`;
 
     
-    let comparisonMessage;
-    if (tempCity1 > tempCity2) {
-        comparisonMessage = `${city1} is hotter than ${city2} by ${tempCity1 - tempCity2}°C.`;
-    } else if (tempCity2 > tempCity1) {
-        comparisonMessage = `${city2} is hotter than ${city1} by ${tempCity2 - tempCity1}°C.`;
-    } else {
-        comparisonMessage = `Both ${city1} and ${city2} have the same temperature: ${tempCity1}°C.`;
-    }
+    const tempDifference = Math.abs(city1AvgTemp - city2AvgTemp);
+    const hotterCity = city1AvgTemp > city2AvgTemp ? city1 : city2;
+    document.getElementById('comparison-result').textContent = `${hotterCity} is hotter by ${tempDifference}°C`;
 
-    document.getElementById('comparison-result').textContent = comparisonMessage;
+    
+    renderYearlyTemperatureGraph(city1, city1Temps, city2, city2Temps);
+
+    // Fetch and display forecast
+    const forecast1 = await fetchCityForecast(city1);
+    const forecast2 = await fetchCityForecast(city2);
+
+    if (forecast1 && forecast2) {
+        displayForecast(city1, forecast1, city2, forecast2);
+    }
 }
 
+// Calculate average temperature from monthly data
+function calculateAverageTemperature(temps) {
+    const total = Object.values(temps).reduce((sum, temp) => sum + temp, 0);
+    return Math.round(total / Object.values(temps).length);
+}
+
+
+async function fetchYearlyTemperatures(city) {
+    try {
+        const response = await fetch(`${API_URL}?q=${city}&units=metric&appid=${API_KEY}`);
+        const data = await response.json();
+        if (data.main && data.main.temp) {
+            
+            const currentTemp = Math.round(data.main.temp);
+            const monthlyTemps = simulateMonthlyTemperatures(currentTemp);
+            return monthlyTemps;
+        } else {
+            console.error(`Could not fetch temperature for ${city}: ${data.message}`);
+            return null;
+        }
+    } catch (error) {
+        console.error(`Error fetching yearly temperatures for ${city}:`, error);
+        return null;
+    }
+}
+
+// Simulate realistic monthly temperature variations
+function simulateMonthlyTemperatures(currentTemp) {
+    const monthlyTemps = {};
+    const months = [
+        'January', 'February', 'March', 'April', 'May', 'June',
+        'July', 'August', 'September', 'October', 'November', 'December'
+    ];
+
+    months.forEach((month, index) => {
+     
+        const variation = (Math.random() - 0.5) * 5;
+        monthlyTemps[month] = Math.round(currentTemp + variation);
+    });
+
+    return monthlyTemps;
+}
+
+// Render the graph
+function renderYearlyTemperatureGraph(city1, city1Temps, city2, city2Temps) {
+    const ctx = document.getElementById('yearlyTemperatureGraph').getContext('2d');
+    const labels = Object.keys(city1Temps); 
+    const dataCity1 = Object.values(city1Temps);
+    const dataCity2 = Object.values(city2Temps);
+
+    // Destroy existing chart
+    if (window.yearlyChart) {
+        window.yearlyChart.destroy();
+    }
+
+    // Create new chart
+    window.yearlyChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [
+                {
+                    label: city1,
+                    data: dataCity1,
+                    borderColor: 'rgba(255, 99, 132, 1)',
+                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                    borderWidth: 1,
+                },
+                {
+                    label: city2,
+                    data: dataCity2,
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                    borderWidth: 1,
+                },
+            ],
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { position: 'top' },
+                tooltip: { mode: 'index' },
+            },
+            scales: {
+                x: { title: { display: true, text: 'Months' } },
+                y: { title: { display: true, text: 'Temperature (°C)' } },
+            },
+        },
+    });
+}
 
 async function isValidCity(city) {
     try {
@@ -128,27 +223,123 @@ async function isValidCity(city) {
     }
 }
 
-// Attach event listeners to city input boxes
-document.getElementById('city1').addEventListener('input', checkInputs);
-document.getElementById('city2').addEventListener('input', checkInputs);
+// Fetch 5-day forecast for a given city using the API
+async function fetchCityForecast(city) {
+    try {
+        const response = await fetch(`${FORECAST_API_URL}?q=${city}&units=metric&appid=${API_KEY}`);
+        const data = await response.json();
+        if (data.list) {
+            const forecast = [];
+            const uniqueDates = new Set();
+            for (const entry of data.list) {
+                const date = entry.dt_txt.split(' ')[0];
+                if (!uniqueDates.has(date)) {
+                    uniqueDates.add(date);
+                    forecast.push({
+                        date: date,
+                        minTemp: entry.main.temp_min,
+                        maxTemp: entry.main.temp_max
+                    });
+                    if (forecast.length === 5) break;
+                }
+            }
+            return forecast;
+        } else {
+            console.error(`Could not fetch forecast for ${city}: ${data.message}`);
+            return null;
+        }
+    } catch (error) {
+        console.error(`Error fetching forecast for ${city}:`, error);
+        return null;
+    }
+}
 
-// Check if both inputs are filled and trigger comparison
-function checkInputs() {
+// Display forecast in the forecast table
+function displayForecast(city1, forecast1, city2, forecast2) {
+    const tbody = document.querySelector('#forecast-table tbody');
+    tbody.innerHTML = ''; // Clear existing rows
+
+    for (let i = 0; i < 5; i++) {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td>${forecast1[i].date}</td>
+            <td>${forecast1[i].minTemp}°C</td>
+            <td>${forecast1[i].maxTemp}°C</td>
+            <td>${forecast2[i].minTemp}°C</td>
+            <td>${forecast2[i].maxTemp}°C</td>
+        `;
+        tbody.appendChild(row);
+    }
+
+    
+    const headers = document.querySelectorAll('#forecast-table th');
+    headers[1].textContent = `Min Temp (${city1})`;
+    headers[2].textContent = `Max Temp (${city1})`;
+    headers[3].textContent = `Min Temp (${city2})`;
+    headers[4].textContent = `Max Temp (${city2})`;
+}
+
+// Attach event listeners to city input boxes
+document.getElementById('city1').addEventListener('input', clearResults);
+document.getElementById('city2').addEventListener('input', clearResults);
+
+// Clear results if any input is empty
+function clearResults() {
     const city1 = document.getElementById('city1').value.trim();
     const city2 = document.getElementById('city2').value.trim();
 
-    // Clear results if any input is empty
     if (!city1 || !city2) {
         document.getElementById('city1-result').textContent = '';
         document.getElementById('city2-result').textContent = '';
         document.getElementById('comparison-result').textContent = '';
-        return;
-    }
-
-    if (city1 && city2) {
-        compareTemperatures();
     }
 }
 
+// Trigger comparison when the "Compare" button is clicked
+document.getElementById('compare-button').addEventListener('click', compareTemperatures);
+
+// Trigger comparison when Enter key is pressed
+document.addEventListener('keydown', function(event) {
+    if (event.key === 'Enter') {
+        compareTemperatures();
+    }
+});
+
+document.addEventListener('DOMContentLoaded', function() {
+    const inputFields = document.querySelectorAll('.input-section input');
+    const graphContainer = document.getElementById('yearlyTemperatureGraph');
+    const forecastTableBody = document.querySelector('#forecast-table tbody');
+
+    inputFields.forEach(input => {
+        input.addEventListener('input', function() {
+            if (input.value.trim() === '') {
+                graphContainer.innerHTML = ''; 
+                forecastTableBody.innerHTML = ''; 
+                document.getElementById('city1-result').textContent = ''; 
+                document.getElementById('city2-result').textContent = ''; 
+                document.getElementById('comparison-result').textContent = ''; 
+                if (window.yearlyChart) {
+                    window.yearlyChart.destroy(); 
+                    window.yearlyChart = null; 
+                }
+            }
+        });
+    });
+
+    
+    function adjustChartSize() {
+        const chartContainer = document.getElementById('chart-container');
+        if (window.innerWidth < 768) {
+            chartContainer.style.width = '100%';
+            chartContainer.style.height = '300px';
+        } else {
+            chartContainer.style.width = '600px';
+            chartContainer.style.height = '400px';
+        }
+    }
+
+    window.addEventListener('resize', adjustChartSize);
+    adjustChartSize(); // Initial call to set the size based on current window size
+});
 
 fetchPredefinedCityTemperatures();

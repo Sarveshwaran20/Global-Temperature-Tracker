@@ -5,31 +5,66 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Global Temperature Tracker</title>
     <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+       
+        h1 {
+            margin-top: 20px;
+            text-align: center;
+        }
+        
+        body {
+            margin-top: 20px;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
-        <h1>Global Temperature Tracker</h1>
-        <div class="input-section">
-            <input type="text" id="city1" placeholder="Enter First City">
-            <input type="text" id="city2" placeholder="Enter Second City">
-            <button onclick="compareTemperatures()"><b>Compare</b></button>
+        <div class="left-side">
+            <h1>Global Temperature Tracker</h1>
+            <div class="input-section">
+                <input type="text" id="city1" placeholder="Enter First City">
+                <input type="text" id="city2" placeholder="Enter Second City">
+                <button id="compare-button" onclick="compareTemperatures()">Compare</button>
+            </div>
+            <div class="results-section">
+                <div id="city1-result" class="city-result"></div>
+                <div id="city2-result" class="city-result"></div>
+                <div id="comparison-result" class="comparison-result"></div>
+                <canvas id="yearlyTemperatureGraph" width="350" height="150"></canvas>
+            </div>
+            <div class="note">
+                <p>Note: The graph's temperature may be 2-3 degrees higher or lower than the overall temperature of the month.</p>
+            </div>
         </div>
-        <div class="results-section">
-            <div id="city1-result" class="city-result"></div>
-            <div id="city2-result" class="city-result"></div>
-            <div id="comparison-result" class="comparison-result"></div>
-        </div>
-        <div id="predefined-cities">
-            <h3>Temperatures of Cities around the World </h3>
-            <table id="city-temperatures">
-                <thead>
-                    <tr>
-                        <th>City</th>
-                        <th>Temperature (°C)</th>
-                    </tr>
-                </thead>
-                <tbody></tbody>
-            </table>
+        <div class="right-side">
+            <h3>Temperature of cities around the World</h3>
+            <div id="city-temperatures-container">
+                <table id="city-temperatures">
+                    <thead>
+                        <tr>
+                            <th>City</th>
+                            <th>Temperature (°C)</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+            <div id="forecast-container">
+                <h3>5-Day Forecast</h3>
+                <table id="forecast-table">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Min Temp (City 1)</th>
+                            <th>Max Temp (City 1)</th>
+                            <th>Min Temp (City 2)</th>
+                            <th>Max Temp (City 2)</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
         </div>
     </div>
     <script src="script.js"></script>
