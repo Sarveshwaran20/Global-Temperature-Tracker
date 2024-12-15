@@ -16,6 +16,18 @@
         body {
             margin-top: 20px;
         }
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+        }
+        .left-side, .right-side {
+            flex: 1 1 100%;
+        }
+        @media (min-width: 768px) {
+            .left-side, .right-side {
+                flex: 1;
+            }
+        }
     </style>
 </head>
 <body>

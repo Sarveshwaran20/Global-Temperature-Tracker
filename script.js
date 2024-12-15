@@ -338,8 +338,24 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    window.addEventListener('resize', adjustChartSize);
+    function adjustLayout() {
+        const container = document.querySelector('.container');
+        if (window.innerWidth < 768) {
+            container.style.flexDirection = 'column';
+            container.style.alignItems = 'center';
+        } else {
+            container.style.flexDirection = 'row';
+            container.style.alignItems = 'flex-start';
+        }
+    }
+
+    window.addEventListener('resize', () => {
+        adjustChartSize();
+        adjustLayout();
+    });
+
     adjustChartSize(); // Initial call to set the size based on current window size
+    adjustLayout(); // Initial call to set the layout based on current window size
 });
 
 fetchPredefinedCityTemperatures();
