@@ -17,6 +17,7 @@ body {
     height: 90vh;
     margin: 10px auto; 
     border-radius: 10px; 
+    overflow-y: auto; /* Allow scrolling */
 }
 
 
