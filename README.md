@@ -1,5 +1,9 @@
 # Global-Temperature-Tracker
 # A website to track and compare global temperature 
+# Key updates 03/01/2025
+### Added Weather icons 
+### Graph displays only for completed/current month and not upcoming months 
+
 # Key updates 15/12/2024
 ### Split the page into to parts/containers
 ### Graph to compare temperature changes 
