@@ -1,11 +1,14 @@
 # Global-Temperature-Tracker
 # A website to track and compare global temperature 
+
+## Help need in designing a responsive layout for mobiles and tablets(Contact:sarveshwaran.k2008@gmail.com)
+
 # Key updates 03/01/2025
 ### Added Weather icons 
 ### Graph displays only for completed/current month and not upcoming months 
 
 # Key updates 15/12/2024
-### Split the page into to parts/containers
+### Split the page into parts/containers
 ### Graph to compare temperature changes 
 ### Displays the temperature of both cities for the next 5-days
 ### Improved layout for better viewing on phones
