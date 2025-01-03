@@ -40,8 +40,8 @@
             <div class="left-side">
                 <h1>Global Temperature Tracker</h1>
                 <div class="input-section">
-                    <input type="text" id="city1" placeholder="Enter First City">
-                    <input type="text" id="city2" placeholder="Enter Second City">
+                    <input type="text" id="city1" placeholder="Enter 1st City/Country">
+                    <input type="text" id="city2" placeholder="Enter 2nd City/Country">
                     <button id="compare-button" onclick="compareTemperatures()">Compare</button>
                 </div>
                 <div class="results-section">
@@ -81,6 +81,10 @@
                         </thead>
                         <tbody></tbody>
                     </table>
+                </div>
+                <div id="additional-weather-info-container">
+                    <h3>Additional Weather Information</h3>
+                    <div id="additional-weather-info"></div>
                 </div>
             </div>
         </div>

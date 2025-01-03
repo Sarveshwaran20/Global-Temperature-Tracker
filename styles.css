@@ -224,6 +224,43 @@ right-side #forecast-table th {
     margin-top: 20px;
 }
 
+#additional-weather-info {
+    margin-top: 20px;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border: 2px solid #000;
+    border-radius: 10px;
+}
+
+#additional-weather-info h3 {
+    font-size: 20px;
+    color: #00796b;
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.weather-info {
+    display: flex;
+    justify-content: space-around;
+}
+
+.city-info {
+    flex: 1;
+    margin: 0 10px;
+    text-align: center;
+}
+
+.city-info h4 {
+    font-size: 18px;
+    color: #00796b;
+    margin-bottom: 10px;
+}
+
+.city-info p {
+    font-size: 16px;
+    margin: 5px 0;
+}
+
 /* Media queries for better layout on phones */
 @media (max-width: 768px) {
     .container {

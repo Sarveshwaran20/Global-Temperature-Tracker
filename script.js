@@ -119,6 +119,14 @@ async function compareTemperatures() {
     if (forecast1 && forecast2) {
         displayForecast(city1, forecast1, city2, forecast2);
     }
+
+    // Fetch and display additional weather information
+    const weatherInfo1 = await fetchAdditionalWeatherInfo(city1);
+    const weatherInfo2 = await fetchAdditionalWeatherInfo(city2);
+
+    if (weatherInfo1 && weatherInfo2) {
+        displayAdditionalWeatherInfo(city1, weatherInfo1, city2, weatherInfo2);
+    }
 }
 
 // Calculate average temperature from monthly data
@@ -219,7 +227,7 @@ async function isValidCity(city) {
     try {
         const response = await fetch(`${API_URL}?q=${city}&appid=${API_KEY}`);
         const data = await response.json();
-        return data.cod === 200;
+        return data.cod === 200 && data.sys.country; // Ensure it's a valid city with a country code
     } catch (error) {
         console.error(`Error validating city: ${error}`);
         return false;
@@ -280,6 +288,48 @@ function displayForecast(city1, forecast1, city2, forecast2) {
     headers[2].textContent = `Max Temp (${city1})`;
     headers[3].textContent = `Min Temp (${city2})`;
     headers[4].textContent = `Max Temp (${city2})`;
+}
+
+// Fetch additional weather information (humidity, wind speed, precipitation)
+async function fetchAdditionalWeatherInfo(city) {
+    try {
+        const response = await fetch(`${API_URL}?q=${city}&units=metric&appid=${API_KEY}`);
+        const data = await response.json();
+        if (data.main && data.wind) {
+            return {
+                humidity: data.main.humidity,
+                windSpeed: data.wind.speed,
+                precipitation: data.rain ? data.rain['1h'] || data.rain['3h'] || 0 : 0 // Check for '1h' and '3h' precipitation
+            };
+        } else {
+            console.error(`Could not fetch additional weather info for ${city}: ${data.message}`);
+            return null;
+        }
+    } catch (error) {
+        console.error(`Error fetching additional weather info for ${city}:`, error);
+        return null;
+    }
+}
+
+// Display additional weather information
+function displayAdditionalWeatherInfo(city1, info1, city2, info2) {
+    const container = document.getElementById('additional-weather-info');
+    container.innerHTML = `
+       <div class="weather-info">
+            <div class="city-info">
+                <h4>${city1}</h4>
+                <p>Humidity: ${info1.humidity}%</p>
+                <p>Wind Speed: ${info1.windSpeed} m/s</p>
+                <p>Precipitation: ${info1.precipitation} mm</p>
+            </div>
+            <div class="city-info">
+                <h4>${city2}</h4>
+                <p>Humidity: ${info2.humidity}%</p>
+                <p>Wind Speed: ${info2.windSpeed} m/s</p>
+                <p>Precipitation: ${info2.precipitation} mm</p>
+            </div>
+        </div>
+    `;
 }
 
 // Attach event listeners to city input boxes
@@ -390,6 +440,11 @@ document.addEventListener('DOMContentLoaded', function() {
     // Set initial theme
     document.body.classList.add('light-theme');
     document.querySelector('.container').classList.add('light-theme');
+
+    // Create container for additional weather information
+    const additionalWeatherInfoContainer = document.createElement('div');
+    additionalWeatherInfoContainer.id = 'additional-weather-info';
+    document.body.appendChild(additionalWeatherInfoContainer);
 });
 
 fetchPredefinedCityTemperatures();
