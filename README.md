@@ -6,6 +6,7 @@
 # Key updates 03/01/2025
 ### Added Weather icons 
 ### Graph displays only for completed/current month and not upcoming months 
+### Added additional Weather Information
 
 # Key updates 15/12/2024
 ### Split the page into parts/containers
