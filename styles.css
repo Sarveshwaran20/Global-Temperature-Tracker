@@ -9,6 +9,16 @@ body {
     overflow: hidden; 
 }
 
+body.light-theme {
+    background-color: #c7e5d8;
+    color: #000;
+}
+
+body.dark-theme {
+    background-color: #2c3e50;
+    color: #ecf0f1;
+}
+
 .container {
     display: flex;
     flex-direction: row; 
@@ -20,6 +30,13 @@ body {
     overflow-y: auto; /* Allow scrolling */
 }
 
+.container.light-theme {
+    background-color: #ffffff;
+}
+
+.container.dark-theme {
+    background-color: #34495e;
+}
 
 .left-side, .right-side {
     width: 48%; 
@@ -95,6 +112,23 @@ button {
 }
 
 button:hover {
+    background-color: #004d40;
+}
+
+.theme-toggle-button {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    padding: 5px 10px; /* Make the button smaller */
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    background-color: #00796b;
+    color: white;
+    font-size: 12px; /* Adjust font size */
+}
+
+.theme-toggle-button:hover {
     background-color: #004d40;
 }
 
@@ -219,5 +253,9 @@ right-side #forecast-table th {
 
     button {
         width: 100%;
+    }
+
+    html, body {
+        overflow-x: auto; /* Enable horizontal scrolling */
     }
 }

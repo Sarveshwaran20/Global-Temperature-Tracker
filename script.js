@@ -155,10 +155,13 @@ function simulateMonthlyTemperatures(currentTemp) {
         'July', 'August', 'September', 'October', 'November', 'December'
     ];
 
+    const currentMonth = new Date().getMonth(); // Get the current month (0-11)
+
     months.forEach((month, index) => {
-     
-        const variation = (Math.random() - 0.5) * 5;
-        monthlyTemps[month] = Math.round(currentTemp + variation);
+        if (index <= currentMonth) { // Only include completed months
+            const variation = (Math.random() - 0.5) * 5;
+            monthlyTemps[month] = Math.round(currentTemp + variation);
+        }
     });
 
     return monthlyTemps;
@@ -238,7 +241,8 @@ async function fetchCityForecast(city) {
                     forecast.push({
                         date: date,
                         minTemp: entry.main.temp_min,
-                        maxTemp: entry.main.temp_max
+                        maxTemp: entry.main.temp_max,
+                        icon: entry.weather[0].icon // Add weather icon
                     });
                     if (forecast.length === 5) break;
                 }
@@ -263,15 +267,14 @@ function displayForecast(city1, forecast1, city2, forecast2) {
         const row = document.createElement('tr');
         row.innerHTML = `
             <td>${forecast1[i].date}</td>
-            <td>${forecast1[i].minTemp}°C</td>
-            <td>${forecast1[i].maxTemp}°C</td>
-            <td>${forecast2[i].minTemp}°C</td>
-            <td>${forecast2[i].maxTemp}°C</td>
+            <td>${forecast1[i].minTemp}°C <img src="http://openweathermap.org/img/wn/${forecast1[i].icon}.png" alt="Weather icon"></td>
+            <td>${forecast1[i].maxTemp}°C <img src="http://openweathermap.org/img/wn/${forecast1[i].icon}.png" alt="Weather icon"></td>
+            <td>${forecast2[i].minTemp}°C <img src="http://openweathermap.org/img/wn/${forecast2[i].icon}.png" alt="Weather icon"></td>
+            <td>${forecast2[i].maxTemp}°C <img src="http://openweathermap.org/img/wn/${forecast2[i].icon}.png" alt="Weather icon"></td>
         `;
         tbody.appendChild(row);
     }
 
-    
     const headers = document.querySelectorAll('#forecast-table th');
     headers[1].textContent = `Min Temp (${city1})`;
     headers[2].textContent = `Max Temp (${city1})`;
@@ -332,9 +335,11 @@ document.addEventListener('DOMContentLoaded', function() {
         if (window.innerWidth < 768) {
             chartContainer.style.width = '100%';
             chartContainer.style.height = '300px';
+            chartContainer.style.overflowX = 'scroll'; // Enable horizontal scrolling
         } else {
             chartContainer.style.width = '600px';
             chartContainer.style.height = '400px';
+            chartContainer.style.overflowX = 'hidden'; // Disable horizontal scrolling
         }
     }
 
@@ -343,19 +348,48 @@ document.addEventListener('DOMContentLoaded', function() {
         if (window.innerWidth < 768) {
             container.style.flexDirection = 'column';
             container.style.alignItems = 'center';
+            document.getElementById('forecast-table').style.overflowX = 'scroll'; // Enable horizontal scrolling for forecast table
         } else {
             container.style.flexDirection = 'row';
             container.style.alignItems = 'flex-start';
+            document.getElementById('forecast-table').style.overflowX = 'hidden'; // Disable horizontal scrolling for forecast table
+        }
+    }
+
+
+    function enablePortraitScrolling() {
+        if (window.innerWidth < 768 && window.innerHeight > window.innerWidth) {
+            document.documentElement.style.overflowX = 'auto'; // Enable horizontal scrolling in portrait mode
+        } else {
+            document.documentElement.style.overflowX = 'hidden'; // Disable horizontal scrolling otherwise
         }
     }
 
     window.addEventListener('resize', () => {
         adjustChartSize();
         adjustLayout();
+        enablePortraitScrolling();
     });
 
     adjustChartSize(); // Initial call to set the size based on current window size
     adjustLayout(); // Initial call to set the layout based on current window size
+    enablePortraitScrolling(); // Initial call to set scrolling based on current orientation
+
+    const themeToggleButton = document.createElement('button');
+    themeToggleButton.textContent = 'Toggle Theme';
+    themeToggleButton.className = 'theme-toggle-button';
+    document.body.appendChild(themeToggleButton);
+
+    themeToggleButton.addEventListener('click', function() {
+        document.body.classList.toggle('dark-theme');
+        document.body.classList.toggle('light-theme');
+        document.querySelector('.container').classList.toggle('dark-theme');
+        document.querySelector('.container').classList.toggle('light-theme');
+    });
+
+    // Set initial theme
+    document.body.classList.add('light-theme');
+    document.querySelector('.container').classList.add('light-theme');
 });
 
 fetchPredefinedCityTemperatures();
