@@ -1,7 +1,8 @@
 # Global-Temperature-Tracker
 # A website to track and compare global temperature 
 
-## Help need in designing a responsive layout for mobiles and tablets(Contact:sarveshwaran.k2008@gmail.com)
+# Key updates 22/02/2025
+### Added Weather Map
 
 # Key updates 03/01/2025
 ### Added Weather icons 
