@@ -545,6 +545,11 @@ document.addEventListener("DOMContentLoaded", function () {
             icon: data.weather[0].icon,
             city: data.name,
           };
+        } else {
+          console.error(
+            `Could not fetch weather data for ${city}: ${data.message}`
+          );
+          return null;
         }
       } catch (error) {
         console.error("Error fetching weather:", error);

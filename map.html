@@ -72,6 +72,40 @@
                 icon: data.weather[0].icon,
                 city: data.name,
               };
+            } else {
+              console.error(
+                `Could not fetch weather data for ${city}: ${data.message}`
+              );
+              return null;
+            }
+          } catch (error) {
+            console.error("Error fetching weather:", error);
+            return null;
+          }
+        }
+
+        // Function to fetch weather for a location by coordinates
+        async function fetchWeatherByCoords(lat, lon) {
+          try {
+            const response = await fetch(
+              `${API_URL}?lat=${lat}&lon=${lon}&units=metric&appid=${API_KEY}`
+            );
+            const data = await response.json();
+
+            if (data.coord && data.main) {
+              return {
+                lat: data.coord.lat,
+                lon: data.coord.lon,
+                temp: data.main.temp,
+                description: data.weather[0].description,
+                icon: data.weather[0].icon,
+                city: data.name || "Unknown Location",
+              };
+            } else {
+              console.error(
+                `Could not fetch weather data for coordinates (${lat}, ${lon}): ${data.message}`
+              );
+              return null;
             }
           } catch (error) {
             console.error("Error fetching weather:", error);
@@ -96,6 +130,26 @@
             }
           }
         }
+
+        // Add click event to fetch weather for clicked location
+        map.on("click", async function (event) {
+          const { lat, lng } = event.latlng;
+          const weather = await fetchWeatherByCoords(lat, lng);
+
+          if (weather) {
+            L.marker([lat, lng])
+              .addTo(map)
+              .bindPopup(
+                `<b>${weather.city}</b><br>
+                Temperature: ${weather.temp}°C<br>
+                Weather: ${weather.description}<br>
+                <img src="http://openweathermap.org/img/wn/${weather.icon}.png">`
+              )
+              .openPopup();
+          } else {
+            alert("Could not fetch weather data for this location.");
+          }
+        });
 
         addWeatherMarkers();
       });
