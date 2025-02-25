@@ -1,298 +1,324 @@
 body {
-    font-family: Arial, sans-serif;
-    background-color: #c7e5d8; 
-    margin: 20px 0 0 0; 
-    display: flex;
-    justify-content: center; 
-    align-items: flex-start; 
-    height: 95vh;
-    overflow: hidden; 
+  font-family: Arial, sans-serif;
+  background-color: #c7e5d8;
+  margin: 20px 0 0 0;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  height: 95vh;
+  overflow: hidden;
 }
 
 body.light-theme {
-    background-color: #c7e5d8;
-    color: #000;
+  background-color: #c7e5d8;
+  color: #000;
 }
 
 body.dark-theme {
-    background-color: #2c3e50;
-    color: #ecf0f1;
+  background-color: #2c3e50;
+  color: #ecf0f1;
 }
 
 .container {
-    display: flex;
-    flex-direction: row; 
-    width: 90%; 
-    max-width: 1200px;
-    height: 90vh;
-    margin: 10px auto; 
-    border-radius: 10px; 
-    overflow-y: auto; /* Allow scrolling */
+  display: flex;
+  flex-direction: row;
+  width: 90%;
+  max-width: 1200px;
+  height: 90vh;
+  margin: 10px auto;
+  border-radius: 10px;
+  overflow-y: auto; /* Allow scrolling */
 }
 
 .container.light-theme {
-    background-color: #ffffff;
+  background-color: #ffffff;
+  color: #000;
 }
 
 .container.dark-theme {
-    background-color: #34495e;
+  background-color: #34495e;
+  color: #ecf0f1;
 }
 
-.left-side, .right-side {
-    width: 48%; 
-    background-color: #ffffff;
-    padding: 20px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    border-radius: 10px;
-    margin: 5px 1%; 
-    height: calc(90vh - 40px); 
-    border: 2px solid #000; 
-    border-radius: 10px;
+.left-side,
+.right-side {
+  width: 48%;
+  background-color: #ffffff;
+  padding: 20px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  margin: 5px 1%;
+  height: calc(90vh - 40px);
+  border: 2px solid #000;
+  border-radius: 10px;
 }
 
 .left-side {
-    overflow-y: hidden; 
+  overflow-y: hidden;
 }
 
 .right-side {
-    overflow-y: auto; 
+  overflow-y: auto;
 }
 
-h1, h3 {
-    font-size: 24px;
-    color: #00796b;
-    text-align: center; 
+.left-side.light-theme,
+.right-side.light-theme {
+  background-color: #ffffff;
+  color: #000;
+}
+
+.left-side.dark-theme,
+.right-side.dark-theme {
+  background-color: #34495e;
+  color: #ecf0f1;
+}
+
+h1,
+h3 {
+  font-size: 24px;
+  color: #00796b;
+  text-align: center;
+}
+
+h1.dark-theme,
+h3.dark-theme {
+  color: #ecf0f1;
 }
 
 h3 {
-    font-size: 22px;
-    margin-bottom: 10px;
+  font-size: 22px;
+  margin-bottom: 10px;
 }
 
 .input-section {
-    margin-bottom: 20px;
-    display: flex;
-    flex-wrap: wrap; 
-    justify-content: center; 
-    gap: 10px; 
-    align-items: center; 
-    width: 100%;
+  margin-bottom: 20px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  align-items: center;
+  width: 100%;
 }
 
 input {
-    padding: 10px;
-    margin: 5px;
-    border-radius: 10px; 
-    border: 2px solid #000; 
-    width: calc(50% - 10px); 
-    font-size: 16px;
-    flex: 1; 
+  padding: 10px;
+  margin: 5px;
+  border-radius: 10px;
+  border: 2px solid #000;
+  width: calc(50% - 10px);
+  font-size: 16px;
+  flex: 1;
 }
 
 .button-container {
-    display: flex;
-    justify-content: center; 
-    align-items: center; 
-    margin-top: 20px; 
-    width: 100%; 
-    margin-left: 0; 
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px;
+  width: 100%;
+  margin-left: 0;
 }
 
 button {
-    width: auto; 
-    padding: 10px 20px; 
-    border-radius: 10px; 
-    background-color: #00796b;
-    color: white;
-    cursor: pointer;
-    font-weight: bold;
-    font-size: 16px; 
-    margin-top: 10px;
-    justify-content: center;
+  width: auto;
+  padding: 10px 20px;
+  border-radius: 10px;
+  background-color: #00796b;
+  color: white;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 16px;
+  margin-top: 10px;
+  justify-content: center;
 }
 
 button:hover {
-    background-color: #004d40;
+  background-color: #004d40;
 }
 
 .theme-toggle-button {
-    position: fixed;
-    top: 10px;
-    right: 10px;
-    padding: 5px 10px; /* Make the button smaller */
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    background-color: #00796b;
-    color: white;
-    font-size: 12px; /* Adjust font size */
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  padding: 5px 10px; /* Make the button smaller */
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  background-color: #00796b;
+  color: white;
+  font-size: 12px; /* Adjust font size */
 }
 
 .theme-toggle-button:hover {
-    background-color: #004d40;
+  background-color: #004d40;
 }
 
 .results-section {
-    margin: 20px 0;
+  margin: 20px 0;
 }
 
-.city-result, .comparison-result {
-    font-size: 16px; 
-    margin: 10px 0;
+.city-result,
+.comparison-result {
+  font-size: 16px;
+  margin: 10px 0;
 }
 
 .comparison-result {
-    font-weight: bold;
-    color: #d84315;
+  font-weight: bold;
+  color: #d84315;
 }
 
 #yearlyTemperatureGraph {
-    margin-top: 20px;
-    width: 100%;
+  margin-top: 20px;
+  width: 100%;
 }
 
 #city-temperatures-container {
-    max-height: 200px; 
-    overflow-y: auto;
-    margin-top: 20px;
-    border: none; 
-    border-radius: 6px; 
+  max-height: 200px;
+  overflow-y: auto;
+  margin-top: 20px;
+  border: none;
+  border-radius: 6px;
 }
 
 table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 10px;
-    border: 2px solid #000; 
-    border-radius: 0;
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+  border: 2px solid #000;
+  border-radius: 0;
 }
 
-th, td {
-    border: 2px solid #000; 
-    padding: 10px;
-    text-align: center;
-    border-radius: 0; 
+th,
+td {
+  border: 2px solid #000;
+  padding: 10px;
+  text-align: center;
+  border-radius: 0;
 }
 
 th {
-    background-color: #00796b;
-    color: white;
+  background-color: #00796b;
+  color: white;
 }
 
 tbody tr:nth-child(odd) {
-    background-color: #f0f0f0;
+  background-color: #f0f0f0;
 }
 
 tbody tr:nth-child(even) {
-    background-color: #ffffff;
+  background-color: #ffffff;
 }
 
 .right-side #forecast-container {
-    margin-top: 20px;
-    width: 100%;
+  margin-top: 20px;
+  width: 100%;
 }
 
 .right-side #forecast-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 10px;
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
 }
 
-.right-side #forecast-table th, .right-side #forecast-table td {
-    border: 2px solid #000; 
-    padding: 10px;
-    text-align: center;
+.right-side #forecast-table th,
+.right-side #forecast-table td {
+  border: 2px solid #000;
+  padding: 10px;
+  text-align: center;
 }
 
 right-side #forecast-table th {
-    background-color: #00796b;
-    color: white;
+  background-color: #00796b;
+  color: white;
 }
 
 .right-side #forecast-table tbody tr:nth-child(odd) {
-    background-color: #f0f0f0;
+  background-color: #f0f0f0;
 }
 
 .right-side #forecast-table tbody tr:nth-child(even) {
-    background-color: #ffffff;
+  background-color: #ffffff;
 }
 
 .note {
-    text-align: center;
-    font-size: 14px;
-    color: #555;
-    margin-top: 20px;
+  text-align: center;
+  font-size: 14px;
+  color: #555;
+  margin-top: 20px;
 }
 
 #additional-weather-info {
-    margin-top: 20px;
-    padding: 20px;
-    background-color: #f9f9f9;
-    border: 2px solid #000;
-    border-radius: 10px;
+  margin-top: 20px;
+  padding: 20px;
+  background-color: #f9f9f9;
+  border: 2px solid #000;
+  border-radius: 10px;
 }
 
 #additional-weather-info h3 {
-    font-size: 20px;
-    color: #00796b;
-    text-align: center;
-    margin-bottom: 10px;
+  font-size: 20px;
+  color: #00796b;
+  text-align: center;
+  margin-bottom: 10px;
 }
 
 .weather-info {
-    display: flex;
-    justify-content: space-around;
+  display: flex;
+  justify-content: space-around;
 }
 
 .city-info {
-    flex: 1;
-    margin: 0 10px;
-    text-align: center;
+  flex: 1;
+  margin: 0 10px;
+  text-align: center;
 }
 
 .city-info h4 {
-    font-size: 18px;
-    color: #00796b;
-    margin-bottom: 10px;
+  font-size: 18px;
+  color: #00796b;
+  margin-bottom: 10px;
 }
 
 .city-info p {
-    font-size: 16px;
-    margin: 5px 0;
+  font-size: 16px;
+  margin: 5px 0;
 }
 
 /* Media queries for better layout on phones */
 @media (max-width: 768px) {
-    .container {
-        flex-direction: column;
-        align-items: center;
-        height: auto;
-        overflow-y: auto; /* Allow scrolling */
-    }
+  .container {
+    flex-direction: column;
+    align-items: center;
+    height: auto;
+    overflow-y: auto; /* Allow scrolling */
+  }
 
-    .left-side, .right-side {
-        width: 90%;
-        height: auto;
-        margin: 10px 0;
-    }
+  .left-side,
+  .right-side {
+    width: 90%;
+    height: auto;
+    margin: 10px 0;
+  }
 
-    .input-section {
-        flex-direction: column;
-    }
+  .input-section {
+    flex-direction: column;
+  }
 
-    input {
-        width: 100%;
-    }
+  input {
+    width: 100%;
+  }
 
-    .button-container {
-        flex-direction: column;
-    }
+  .button-container {
+    flex-direction: column;
+  }
 
-    button {
-        width: 100%;
-    }
+  button {
+    width: 100%;
+  }
 
-    html, body {
-        overflow-x: auto; /* Enable horizontal scrolling */
-    }
+  html,
+  body {
+    overflow-x: auto; /* Enable horizontal scrolling */
+  }
 }

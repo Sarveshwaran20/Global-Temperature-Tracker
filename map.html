@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Map</title>
+    <link rel="stylesheet" href="styles.css" />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+    />
+    <style>
+      body {
+        overflow: hidden; /* Prevent both horizontal and vertical overflow */
+      }
+      #map {
+        height: 100vh;
+        width: 100%;
+      }
+      #back-button {
+        position: fixed;
+        top: 10px;
+        left: 10px;
+        padding: 10px 20px;
+        font-size: 16px;
+        background-color: #00796b;
+        color: white;
+        border: none;
+        cursor: pointer;
+        border-radius: 5px;
+        z-index: 1000;
+      }
+      #back-button:hover {
+        background-color: #004d40;
+      }
+    </style>
+  </head>
+  <body>
+    <button id="back-button" onclick="goBack()">Back</button>
+    <div id="map"></div>
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script>
+      const API_KEY = "b27a65c44a73a52ecf72f50c632be1ac";
+      const API_URL = "https://api.openweathermap.org/data/2.5/weather";
+
+      function goBack() {
+        window.location.href = "index.html";
+      }
+
+      document.addEventListener("DOMContentLoaded", function () {
+        var map = L.map("map").setView([20, 0], 2);
+
+        // Add a Tile Layer
+        L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+          attribution: "&copy; OpenStreetMap contributors",
+        }).addTo(map);
+
+        // Function to fetch weather for a city
+        async function fetchCityWeather(city) {
+          try {
+            const response = await fetch(
+              `${API_URL}?q=${city}&units=metric&appid=${API_KEY}`
+            );
+            const data = await response.json();
+
+            if (data.coord && data.main) {
+              return {
+                lat: data.coord.lat,
+                lon: data.coord.lon,
+                temp: data.main.temp,
+                description: data.weather[0].description,
+                icon: data.weather[0].icon,
+                city: data.name,
+              };
+            }
+          } catch (error) {
+            console.error("Error fetching weather:", error);
+            return null;
+          }
+        }
+
+        // Add predefined city weather markers
+        async function addWeatherMarkers() {
+          for (const city of predefinedCities) {
+            const weather = await fetchCityWeather(city);
+
+            if (weather) {
+              L.marker([weather.lat, weather.lon])
+                .addTo(map)
+                .bindPopup(
+                  `<b>${weather.city}</b><br>
+                  Temperature: ${weather.temp}°C<br>
+                  Weather: ${weather.description}<br>
+                  <img src="http://openweathermap.org/img/wn/${weather.icon}.png">`
+                );
+            }
+          }
+        }
+
+        addWeatherMarkers();
+      });
+    </script>
+  </body>
+</html>

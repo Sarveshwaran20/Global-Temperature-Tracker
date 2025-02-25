@@ -1,94 +1,141 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Global Temperature Tracker</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="styles.css" />
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-       
-        h1 {
-            margin-top: 20px;
-            text-align: center;
+      h1 {
+        margin-top: 20px;
+        text-align: center;
+      }
+
+      body {
+        margin-top: 20px;
+        overflow: hidden; /* Prevent both horizontal and vertical overflow */
+      }
+      .container {
+        display: flex;
+        flex-wrap: wrap;
+      }
+      .left-side,
+      .right-side {
+        flex: 1 1 100%;
+      }
+      @media (min-width: 768px) {
+        .left-side,
+        .right-side {
+          flex: 1;
         }
-        
-        body {
-            margin-top: 20px;
-            overflow-x: hidden; /* Prevent horizontal overflow */
-        }
-        .container {
-            display: flex;
-            flex-wrap: wrap;
-        }
-        .left-side, .right-side {
-            flex: 1 1 100%;
-        }
-        @media (min-width: 768px) {
-            .left-side, .right-side {
-                flex: 1;
-            }
-        }
-        .scroll-wrapper {
-            overflow-x: auto; /* Enable horizontal scrolling */
-        }
+      }
+      .scroll-wrapper {
+        overflow: hidden; /* Disable horizontal scrolling */
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
+    <button
+      id="top-right-map-button"
+      onclick="window.location.href='map.html';"
+    >
+      View Map
+    </button>
+    <style>
+      #top-right-map-button {
+        position: fixed;
+        top: 10px;
+        right: 10px;
+        padding: 10px 20px;
+        font-size: 16px;
+        background-color: #00796b;
+        color: white;
+        border: none;
+        cursor: pointer;
+        border-radius: 5px;
+        z-index: 1000;
+      }
+      #top-right-map-button:hover {
+        background-color: #004d40;
+      }
+    </style>
+
+    <button id="theme-toggle-button" class="theme-toggle-button">
+      Toggle Theme
+    </button>
+
     <div class="scroll-wrapper">
-        <div class="container">
-            <div class="left-side">
-                <h1>Global Temperature Tracker</h1>
-                <div class="input-section">
-                    <input type="text" id="city1" placeholder="Enter 1st City/Country">
-                    <input type="text" id="city2" placeholder="Enter 2nd City/Country">
-                    <button id="compare-button" onclick="compareTemperatures()">Compare</button>
-                </div>
-                <div class="results-section">
-                    <div id="city1-result" class="city-result"></div>
-                    <div id="city2-result" class="city-result"></div>
-                    <div id="comparison-result" class="comparison-result"></div>
-                    <canvas id="yearlyTemperatureGraph" width="350" height="150"></canvas>
-                </div>
-                <div class="note">
-                    <p>Note: The graph's temperature may be 2-3 degrees higher or lower than the overall temperature of the month.</p>
-                </div>
-            </div>
-            <div class="right-side">
-                <h3>Temperature of cities around the World</h3>
-                <div id="city-temperatures-container">
-                    <table id="city-temperatures">
-                        <thead>
-                            <tr>
-                                <th>City</th>
-                                <th>Temperature (°C)</th>
-                            </tr>
-                        </thead>
-                        <tbody></tbody>
-                    </table>
-                </div>
-                <div id="forecast-container">
-                    <h3>5-Day Forecast</h3>
-                    <table id="forecast-table">
-                        <thead>
-                            <tr>
-                                <th>Date</th>
-                                <th>Min Temp (City 1) (°C)</th>
-                                <th>Max Temp (City 1) (°C)</th>
-                                <th>Min Temp (City 2) (°C)</th>
-                                <th>Max Temp (City 2) (°C)</th>
-                            </tr>
-                        </thead>
-                        <tbody></tbody>
-                    </table>
-                </div>
-                <div id="additional-weather-info-container">
-                    <h3>Additional Weather Information</h3>
-                    <div id="additional-weather-info"></div>
-                </div>
-            </div>
+      <div class="container">
+        <div class="left-side">
+          <h1>Global Temperature Tracker</h1>
+          <div class="input-section">
+            <input
+              type="text"
+              id="city1"
+              placeholder="Enter 1st City/Country"
+            />
+            <input
+              type="text"
+              id="city2"
+              placeholder="Enter 2nd City/Country"
+            />
+            <button id="compare-button" onclick="compareTemperatures()">
+              Compare
+            </button>
+          </div>
+          <div class="results-section">
+            <div id="city1-result" class="city-result"></div>
+            <div id="city2-result" class="city-result"></div>
+            <div id="comparison-result" class="comparison-result"></div>
+            <canvas
+              id="yearlyTemperatureGraph"
+              width="350"
+              height="150"
+            ></canvas>
+          </div>
+          <div class="note">
+            <p>
+              Note: The graph's temperature may be 2-3 degrees higher or lower
+              than the overall temperature of the month.
+            </p>
+          </div>
         </div>
+        <div class="right-side">
+          <h3>Temperature of cities around the World</h3>
+          <div id="city-temperatures-container">
+            <table id="city-temperatures">
+              <thead>
+                <tr>
+                  <th>City</th>
+                  <th>Temperature (°C)</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+          <div id="forecast-container">
+            <h3>5-Day Forecast</h3>
+            <table id="forecast-table">
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Min Temp (City 1) (°C)</th>
+                  <th>Max Temp (City 1) (°C)</th>
+                  <th>Min Temp (City 2) (°C)</th>
+                  <th>Max Temp (City 2) (°C)</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+          <div id="additional-weather-info-container">
+            <h3>Additional Weather Information</h3>
+            <div id="additional-weather-info"></div>
+          </div>
+        </div>
+      </div>
     </div>
     <script src="script.js"></script>
-</body>
+  </body>
 </html>
