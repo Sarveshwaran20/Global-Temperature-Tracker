@@ -454,37 +454,42 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   });
 
-  function adjustChartSize() {
-    const chartContainer = document.getElementById("chart-container");
-    if (window.innerWidth < 768) {
-      chartContainer.style.width = "100%";
-      chartContainer.style.height = "300px";
-      chartContainer.style.overflowX = "scroll"; // Enable horizontal scrolling
-    } else {
-      chartContainer.style.width = "600px";
-      chartContainer.style.height = "400px";
-      chartContainer.style.overflowX = "hidden"; // Disable horizontal scrolling
-    }
-  }
-
+  // Adjust layout using Tailwind classes
   function adjustLayout() {
     const container = document.querySelector(".container");
     if (window.innerWidth < 768) {
-      container.style.flexDirection = "column";
-      container.style.alignItems = "center";
-      document.getElementById("forecast-table").style.overflowX = "scroll"; // Enable horizontal scrolling for forecast table
+      container.classList.remove("flex-row", "items-start");
+      container.classList.add("flex-col", "items-center");
+      document
+        .getElementById("forecast-table")
+        .classList.add("overflow-x-scroll");
     } else {
-      container.style.flexDirection = "row";
-      container.style.alignItems = "flex-start";
-      document.getElementById("forecast-table").style.overflowX = "hidden"; // Disable horizontal scrolling for forecast table
+      container.classList.remove("flex-col", "items-center");
+      container.classList.add("flex-row", "items-start");
+      document
+        .getElementById("forecast-table")
+        .classList.remove("overflow-x-scroll");
     }
   }
 
+  // Adjust chart container size using Tailwind classes
+  function adjustChartSize() {
+    const chartContainer = document.getElementById("chart-container");
+    if (window.innerWidth < 768) {
+      chartContainer.classList.add("w-full", "h-72", "overflow-x-scroll");
+      chartContainer.classList.remove("w-96", "h-96", "overflow-hidden");
+    } else {
+      chartContainer.classList.add("w-96", "h-96", "overflow-hidden");
+      chartContainer.classList.remove("w-full", "h-72", "overflow-x-scroll");
+    }
+  }
+
+  // Enable horizontal scrolling in portrait mode
   function enablePortraitScrolling() {
     if (window.innerWidth < 768 && window.innerHeight > window.innerWidth) {
-      document.documentElement.style.overflowX = "auto"; // Enable horizontal scrolling in portrait mode
+      document.documentElement.classList.add("overflow-x-auto");
     } else {
-      document.documentElement.style.overflowX = "hidden"; // Disable horizontal scrolling otherwise
+      document.documentElement.classList.remove("overflow-x-auto");
     }
   }
 
@@ -494,9 +499,9 @@ document.addEventListener("DOMContentLoaded", function () {
     enablePortraitScrolling();
   });
 
-  adjustChartSize(); // Initial call to set the size based on current window size
-  adjustLayout(); // Initial call to set the layout based on current window size
-  enablePortraitScrolling(); // Initial call to set scrolling based on current orientation
+  adjustChartSize();
+  adjustLayout();
+  enablePortraitScrolling();
 
   const themeToggleButton = document.createElement("button");
   themeToggleButton.textContent = "Toggle Theme";

@@ -3,24 +3,31 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Map</title>
-    <link rel="stylesheet" href="styles.css" />
+    <title>Enhanced Weather Map</title>
     <link
       rel="stylesheet"
       href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
     />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet.markercluster/dist/MarkerCluster.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet.markercluster/dist/MarkerCluster.Default.css"
+    />
     <style>
       body {
-        overflow: hidden; /* Prevent both horizontal and vertical overflow */
+        overflow: hidden;
       }
       #map {
         height: 100vh;
         width: 100%;
       }
-      #back-button {
+      #back-button,
+      #locate-button,
+      #clear-markers-button {
         position: fixed;
-        top: 10px;
-        left: 10px;
         padding: 10px 20px;
         font-size: 16px;
         background-color: #00796b;
@@ -30,30 +37,60 @@
         border-radius: 5px;
         z-index: 1000;
       }
-      #back-button:hover {
+      #back-button {
+        top: 10px;
+        left: 10px;
+      }
+      #locate-button {
+        top: 10px;
+        right: 10px;
+      }
+      #clear-markers-button {
+        top: 60px;
+        right: 10px;
+      }
+      #back-button:hover,
+      #locate-button:hover,
+      #clear-markers-button:hover {
         background-color: #004d40;
       }
     </style>
   </head>
   <body>
     <button id="back-button" onclick="goBack()">Back</button>
+    <button id="locate-button" onclick="locateUser()">Locate Me</button>
+    <button id="clear-markers-button" onclick="clearMarkers()">
+      Clear Markers
+    </button>
     <div id="map"></div>
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet.markercluster/dist/leaflet.markercluster.js"></script>
     <script>
       const API_KEY = "b27a65c44a73a52ecf72f50c632be1ac";
       const API_URL = "https://api.openweathermap.org/data/2.5/weather";
+
+      // Define markers globally
+      let markers;
 
       function goBack() {
         window.location.href = "index.html";
       }
 
+      // Initialize the map
       document.addEventListener("DOMContentLoaded", function () {
-        var map = L.map("map").setView([20, 0], 2);
+        const map = L.map("map").setView([20, 0], 2);
 
         // Add a Tile Layer
         L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-          attribution: "&copy; OpenStreetMap contributors",
+          attribution: "© OpenStreetMap contributors",
         }).addTo(map);
+
+        // Move zoom controls to the bottom-right corner
+        map.zoomControl.setPosition("bottomright");
+
+        // Initialize marker cluster group
+        markers = L.markerClusterGroup();
+        map.addLayer(markers);
 
         // Function to fetch weather for a city
         async function fetchCityWeather(city) {
@@ -119,14 +156,19 @@
             const weather = await fetchCityWeather(city);
 
             if (weather) {
-              L.marker([weather.lat, weather.lon])
-                .addTo(map)
-                .bindPopup(
-                  `<b>${weather.city}</b><br>
-                  Temperature: ${weather.temp}°C<br>
-                  Weather: ${weather.description}<br>
-                  <img src="http://openweathermap.org/img/wn/${weather.icon}.png">`
-                );
+              const marker = L.marker([weather.lat, weather.lon], {
+                icon: L.icon({
+                  iconUrl: `http://openweathermap.org/img/wn/${weather.icon}.png`,
+                  iconSize: [40, 40],
+                }),
+              }).bindPopup(
+                `<b>${weather.city}</b><br>
+                Temperature: ${weather.temp}°C<br>
+                Weather: ${weather.description}<br>
+                <img src="http://openweathermap.org/img/wn/${weather.icon}.png">`
+              );
+
+              markers.addLayer(marker);
             }
           }
         }
@@ -137,8 +179,12 @@
           const weather = await fetchWeatherByCoords(lat, lng);
 
           if (weather) {
-            L.marker([lat, lng])
-              .addTo(map)
+            const marker = L.marker([lat, lng], {
+              icon: L.icon({
+                iconUrl: `http://openweathermap.org/img/wn/${weather.icon}.png`,
+                iconSize: [40, 40],
+              }),
+            })
               .bindPopup(
                 `<b>${weather.city}</b><br>
                 Temperature: ${weather.temp}°C<br>
@@ -146,10 +192,51 @@
                 <img src="http://openweathermap.org/img/wn/${weather.icon}.png">`
               )
               .openPopup();
+
+            markers.addLayer(marker);
           } else {
             alert("Could not fetch weather data for this location.");
           }
         });
+
+        // Locate user and center map
+        window.locateUser = function () {
+          if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+              (position) => {
+                const { latitude, longitude } = position.coords;
+                map.setView([latitude, longitude], 10);
+
+                const marker = L.marker([latitude, longitude], {
+                  icon: L.icon({
+                    iconUrl:
+                      "https://cdn-icons-png.flaticon.com/512/684/684908.png",
+                    iconSize: [40, 40],
+                  }),
+                })
+                  .addTo(map)
+                  .bindPopup("You are here!")
+                  .openPopup();
+
+                markers.addLayer(marker);
+              },
+              () => {
+                alert("Could not fetch your location.");
+              }
+            );
+          } else {
+            alert("Geolocation is not supported by your browser.");
+          }
+        };
+
+        // Clear all markers
+        window.clearMarkers = function () {
+          if (markers) {
+            markers.clearLayers(); // Clears all markers from the cluster group
+          } else {
+            console.error("Markers not initialized.");
+          }
+        };
 
         addWeatherMarkers();
       });

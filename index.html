@@ -1,141 +1,294 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="bg-teal-100 text-gray-800">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Global Temperature Tracker</title>
-    <link rel="stylesheet" href="styles.css" />
+    <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-      h1 {
-        margin-top: 20px;
-        text-align: center;
-      }
-
       body {
         margin-top: 20px;
-        overflow: hidden; /* Prevent both horizontal and vertical overflow */
+        overflow-y: auto; /* Enable vertical scrolling */
       }
-      .container {
-        display: flex;
-        flex-wrap: wrap;
+
+      #yearlyTemperatureGraph {
+        height: 300px; /* Fixed height for the graph */
+        width: 100%; /* Full width */
       }
-      .left-side,
-      .right-side {
-        flex: 1 1 100%;
-      }
-      @media (min-width: 768px) {
-        .left-side,
-        .right-side {
-          flex: 1;
+
+      /* Responsive Design */
+      @media (max-width: 1024px) {
+        h1 {
+          font-size: 2rem; /* Resize heading for medium screens */
+        }
+
+        h2 {
+          font-size: 1.5rem; /* Resize subheadings for medium screens */
+        }
+
+        .text-lg {
+          font-size: 1rem; /* Resize large text for medium screens */
+        }
+
+        .text-sm {
+          font-size: 0.875rem; /* Resize small text for medium screens */
         }
       }
-      .scroll-wrapper {
-        overflow: hidden; /* Disable horizontal scrolling */
+
+      @media (max-width: 768px) {
+        .flex-row {
+          flex-direction: column;
+        }
+
+        .left-side,
+        .right-side {
+          width: 100%;
+        }
+
+        #city-temperatures-container,
+        #forecast-container {
+          overflow-x: auto;
+        }
+
+        #yearlyTemperatureGraph {
+          height: 250px;
+        }
+
+        h1 {
+          font-size: 1.75rem; /* Resize heading for small screens */
+        }
+
+        h2 {
+          font-size: 1.25rem; /* Resize subheadings for small screens */
+        }
+
+        .text-lg {
+          font-size: 0.875rem; /* Resize large text for small screens */
+        }
+
+        .text-sm {
+          font-size: 0.75rem; /* Resize small text for small screens */
+        }
+      }
+
+      @media (max-width: 480px) {
+        h1 {
+          font-size: 1.5rem; /* Resize heading for very small screens */
+        }
+
+        h2 {
+          font-size: 1rem; /* Resize subheadings for very small screens */
+        }
+
+        .text-lg {
+          font-size: 0.75rem; /* Resize large text for very small screens */
+        }
+
+        .text-sm {
+          font-size: 0.625rem; /* Resize small text for very small screens */
+        }
+
+        button {
+          font-size: 0.75rem; /* Resize button text for very small screens */
+          padding: 6px 12px; /* Adjust button padding */
+        }
+      }
+
+      /* Dark theme styles */
+      .dark-theme {
+        background-color: #1a202c; /* Dark background for the entire page */
+        color: #f7fafc; /* Light text */
+      }
+
+      .dark-theme body {
+        background-color: #1a202c; /* Ensure body background changes */
+      }
+
+      .dark-theme .bg-white {
+        background-color: #2d3748; /* Darker background for cards */
+      }
+
+      .dark-theme .text-teal-700 {
+        color: #81e6d9; /* Lighter teal for headings */
+      }
+
+      .dark-theme .bg-teal-600 {
+        background-color: #4fd1c5; /* Lighter teal for buttons */
+      }
+
+      .dark-theme .hover\:bg-teal-700:hover {
+        background-color: #38b2ac; /* Adjust hover color for buttons */
+      }
+
+      .dark-theme .border-black {
+        border-color: #f7fafc; /* Light border for tables */
+      }
+
+      .dark-theme table {
+        background-color: #2d3748; /* Darker background for tables */
+      }
+
+      .dark-theme th,
+      .dark-theme td {
+        color: #f7fafc; /* Light text for table cells */
       }
     </style>
   </head>
   <body>
+    <!-- Map Button -->
     <button
       id="top-right-map-button"
       onclick="window.location.href='map.html';"
+      class="fixed top-4 right-4 px-4 py-2 bg-teal-600 text-white rounded-lg shadow-md hover:bg-teal-700"
     >
       View Map
     </button>
-    <style>
-      #top-right-map-button {
-        position: fixed;
-        top: 10px;
-        right: 10px;
-        padding: 10px 20px;
-        font-size: 16px;
-        background-color: #00796b;
-        color: white;
-        border: none;
-        cursor: pointer;
-        border-radius: 5px;
-        z-index: 1000;
-      }
-      #top-right-map-button:hover {
-        background-color: #004d40;
-      }
-    </style>
 
-    <button id="theme-toggle-button" class="theme-toggle-button">
+    <!-- Theme Toggle Button -->
+    <button
+      id="theme-toggle-button"
+      class="fixed top-4 left-4 px-4 py-2 bg-gray-600 text-white rounded-lg shadow-md hover:bg-gray-700"
+    >
       Toggle Theme
     </button>
 
-    <div class="scroll-wrapper">
-      <div class="container">
-        <div class="left-side">
-          <h1>Global Temperature Tracker</h1>
-          <div class="input-section">
+    <!-- Main Container -->
+    <div class="container mx-auto p-6">
+      <h1 class="text-3xl font-bold mb-8 text-center text-teal-700">
+        Global Temperature Tracker
+      </h1>
+      <div class="flex flex-col lg:flex-row gap-8">
+        <!-- Left Section -->
+        <div
+          class="left-side flex-1 bg-white p-6 rounded-lg shadow-md border border-gray-300"
+        >
+          <h2 class="text-xl font-bold mb-6 text-center text-teal-700">
+            Compare Cities
+          </h2>
+          <div class="input-section flex flex-col gap-4">
             <input
               type="text"
               id="city1"
               placeholder="Enter 1st City/Country"
+              class="p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500"
             />
             <input
               type="text"
               id="city2"
               placeholder="Enter 2nd City/Country"
+              class="p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500"
             />
-            <button id="compare-button" onclick="compareTemperatures()">
+            <button
+              id="compare-button"
+              onclick="compareTemperatures()"
+              class="px-4 py-2 bg-teal-600 text-white rounded-lg shadow-md hover:bg-teal-700"
+            >
               Compare
             </button>
           </div>
-          <div class="results-section">
-            <div id="city1-result" class="city-result"></div>
-            <div id="city2-result" class="city-result"></div>
-            <div id="comparison-result" class="comparison-result"></div>
+          <div class="results-section mt-6">
+            <div
+              id="city1-result"
+              class="city-result text-lg font-semibold mb-2"
+            ></div>
+            <div
+              id="city2-result"
+              class="city-result text-lg font-semibold mb-2"
+            ></div>
+            <div
+              id="comparison-result"
+              class="comparison-result text-lg font-semibold mb-4 text-red-600"
+            ></div>
             <canvas
               id="yearlyTemperatureGraph"
-              width="350"
-              height="150"
+              class="bg-gray-100 rounded-lg"
             ></canvas>
           </div>
-          <div class="note">
+          <div class="note mt-4 text-sm text-gray-500">
             <p>
               Note: The graph's temperature may be 2-3 degrees higher or lower
               than the overall temperature of the month.
             </p>
           </div>
         </div>
-        <div class="right-side">
-          <h3>Temperature of cities around the World</h3>
-          <div id="city-temperatures-container">
-            <table id="city-temperatures">
+
+        <!-- Right Section -->
+        <div
+          class="right-side flex-1 bg-white p-6 rounded-lg shadow-md border border-gray-300"
+        >
+          <h2 class="text-xl font-bold mb-4 text-center text-teal-700">
+            Temperature of Cities Around the World
+          </h2>
+          <div
+            id="city-temperatures-container"
+            class="overflow-x-auto max-h-48"
+          >
+            <table
+              id="city-temperatures"
+              class="table-auto w-full text-left border-collapse border border-black"
+            >
               <thead>
-                <tr>
-                  <th>City</th>
-                  <th>Temperature (°C)</th>
+                <tr class="bg-teal-600 text-white">
+                  <th class="border border-black p-2 text-center">City</th>
+                  <th class="border border-black p-2 text-center">
+                    Temperature (°C)
+                  </th>
                 </tr>
               </thead>
-              <tbody></tbody>
+              <tbody>
+                <tr></tr>
+                <tr></tr>
+              </tbody>
             </table>
           </div>
-          <div id="forecast-container">
-            <h3>5-Day Forecast</h3>
-            <table id="forecast-table">
-              <thead>
-                <tr>
-                  <th>Date</th>
-                  <th>Min Temp (City 1) (°C)</th>
-                  <th>Max Temp (City 1) (°C)</th>
-                  <th>Min Temp (City 2) (°C)</th>
-                  <th>Max Temp (City 2) (°C)</th>
-                </tr>
-              </thead>
-              <tbody></tbody>
-            </table>
+          <div id="forecast-container" class="mt-6">
+            <h2 class="text-xl font-bold mb-4 text-center text-teal-700">
+              5-Day Forecast
+            </h2>
+            <div class="overflow-x-auto max-h-48">
+              <table
+                id="forecast-table"
+                class="table-auto w-full text-left border-collapse border border-black"
+              >
+                <thead>
+                  <tr class="bg-teal-600 text-white">
+                    <th class="border border-black p-2 text-center">Date</th>
+                    <th class="border border-black p-2 text-center">
+                      Min Temp (City 1)
+                    </th>
+                    <th class="border border-black p-2 text-center">
+                      Max Temp (City 1)
+                    </th>
+                    <th class="border border-black p-2 text-center">
+                      Min Temp (City 2)
+                    </th>
+                    <th class="border border-black p-2 text-center">
+                      Max Temp (City 2)
+                    </th>
+                  </tr>
+                </thead>
+                <tbody></tbody>
+              </table>
+            </div>
           </div>
-          <div id="additional-weather-info-container">
-            <h3>Additional Weather Information</h3>
+          <div id="additional-weather-info-container" class="mt-6">
+            <h2 class="text-xl font-bold mb-4 text-center text-teal-700">
+              Additional Weather Information
+            </h2>
             <div id="additional-weather-info"></div>
           </div>
         </div>
       </div>
     </div>
+
+    <script>
+      // Theme toggle functionality
+      const themeToggleButton = document.getElementById("theme-toggle-button");
+      themeToggleButton.addEventListener("click", () => {
+        document.documentElement.classList.toggle("dark-theme");
+      });
+    </script>
     <script src="script.js"></script>
   </body>
 </html>
