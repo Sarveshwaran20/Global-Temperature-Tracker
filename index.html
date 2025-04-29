@@ -27,6 +27,11 @@
           font-size: 1.5rem; /* Resize subheadings for medium screens */
         }
 
+        button {
+          font-size: 0.9rem; /* Resize button text for medium screens */
+          padding: 8px 16px; /* Adjust button padding */
+        }
+
         .text-lg {
           font-size: 1rem; /* Resize large text for medium screens */
         }
@@ -63,12 +68,31 @@
           font-size: 1.25rem; /* Resize subheadings for small screens */
         }
 
+        button {
+          font-size: 0.8rem; /* Resize button text for small screens */
+          padding: 6px 12px; /* Adjust button padding */
+        }
+
         .text-lg {
           font-size: 0.875rem; /* Resize large text for small screens */
         }
 
         .text-sm {
           font-size: 0.75rem; /* Resize small text for small screens */
+        }
+
+        /* Move buttons below the header */
+        #button-container {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          margin-top: 10px;
+        }
+
+        #top-right-map-button,
+        #theme-toggle-button {
+          position: static;
+          margin-bottom: 10px;
         }
       }
 
@@ -81,17 +105,17 @@
           font-size: 1rem; /* Resize subheadings for very small screens */
         }
 
+        button {
+          font-size: 0.75rem; /* Resize button text for very small screens */
+          padding: 5px 10px; /* Adjust button padding */
+        }
+
         .text-lg {
           font-size: 0.75rem; /* Resize large text for very small screens */
         }
 
         .text-sm {
           font-size: 0.625rem; /* Resize small text for very small screens */
-        }
-
-        button {
-          font-size: 0.75rem; /* Resize button text for very small screens */
-          padding: 6px 12px; /* Adjust button padding */
         }
       }
 
@@ -136,28 +160,31 @@
     </style>
   </head>
   <body>
-    <!-- Map Button -->
-    <button
-      id="top-right-map-button"
-      onclick="window.location.href='map.html';"
-      class="fixed top-4 right-4 px-4 py-2 bg-teal-600 text-white rounded-lg shadow-md hover:bg-teal-700"
-    >
-      View Map
-    </button>
-
-    <!-- Theme Toggle Button -->
-    <button
-      id="theme-toggle-button"
-      class="fixed top-4 left-4 px-4 py-2 bg-gray-600 text-white rounded-lg shadow-md hover:bg-gray-700"
-    >
-      Toggle Theme
-    </button>
+    <!-- Button Container -->
 
     <!-- Main Container -->
     <div class="container mx-auto p-6">
       <h1 class="text-3xl font-bold mb-8 text-center text-teal-700">
         Global Temperature Tracker
       </h1>
+      <div id="button-container" class="flex justify-between mb-6">
+        <!-- Theme Toggle Button -->
+        <button
+          id="theme-toggle-button"
+          class="px-4 py-2 bg-gray-600 text-white rounded-lg shadow-md hover:bg-gray-700"
+        >
+          Toggle Theme
+        </button>
+
+        <!-- Map Button -->
+        <button
+          id="top-right-map-button"
+          onclick="window.location.href='map.html';"
+          class="px-4 py-2 bg-teal-600 text-white rounded-lg shadow-md hover:bg-teal-700"
+        >
+          View Map
+        </button>
+      </div>
       <div class="flex flex-col lg:flex-row gap-8">
         <!-- Left Section -->
         <div
