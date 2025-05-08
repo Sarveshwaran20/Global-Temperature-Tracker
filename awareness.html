@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Global Warming Awareness</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      /* Animated gradient background */
+      body {
+        background: linear-gradient(120deg, #a1c4fd, #c2e9fb);
+        background-size: 400% 400%;
+        animation: gradientBG 10s ease infinite;
+        color: #2d3748;
+      }
+
+      @keyframes gradientBG {
+        0% {
+          background-position: 0% 50%;
+        }
+        50% {
+          background-position: 100% 50%;
+        }
+        100% {
+          background-position: 0% 50%;
+        }
+      }
+
+      /* Glow effect for headings */
+      .glow-title {
+        text-shadow: 0 0 10px rgba(0, 255, 255, 0.8),
+          0 0 20px rgba(0, 255, 255, 0.6), 0 0 30px rgba(0, 255, 255, 0.4);
+      }
+
+      /* Fun animation for rotating facts */
+      .fact-box {
+        animation: fadeIn 2s ease-in-out;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+
+      /* Confetti animation */
+      .confetti {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        z-index: 9999;
+      }
+
+      .confetti-piece {
+        position: absolute;
+        width: 10px;
+        height: 10px;
+        background-color: #ff6f61;
+        animation: confettiFall 3s linear infinite;
+      }
+
+      @keyframes confettiFall {
+        0% {
+          transform: translateY(-100vh) rotate(0deg);
+        }
+        100% {
+          transform: translateY(100vh) rotate(360deg);
+        }
+      }
+
+      /* Quiz styling */
+      .quiz-container {
+        background-color: #f0f9ff;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      }
+
+      .quiz-container button {
+        transition: background-color 0.3s ease;
+      }
+
+      .quiz-container button:hover {
+        background-color: #38b2ac;
+      }
+
+      /* Progress bar styling */
+      .progress-bar {
+        height: 10px;
+        background-color: #e2e8f0;
+        border-radius: 5px;
+        overflow: hidden;
+        margin-top: 10px;
+      }
+
+      .progress-bar-fill {
+        height: 100%;
+        background-color: #38b2ac;
+        width: 0%;
+        transition: width 0.5s ease-in-out;
+      }
+
+      /* Return button styling */
+      .return-button {
+        position: fixed;
+        top: 20px;
+        left: 20px;
+        background-color: #4fd1c5;
+        color: white;
+        padding: 10px 20px;
+        border-radius: 5px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        transition: background-color 0.3s ease, transform 0.2s ease;
+      }
+
+      .return-button:hover {
+        background-color: #38b2ac;
+        transform: scale(1.1);
+      }
+
+      /* Call-to-action hover animation */
+      .cta-button {
+        transition: transform 0.3s ease, background-color 0.3s ease;
+      }
+
+      .cta-button:hover {
+        transform: scale(1.1);
+        background-color: #319795;
+      }
+
+      /* Carbon Footprint Calculator */
+      .calculator {
+        background-color: #ffffff;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      }
+
+      .calculator input {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 10px;
+        border: 1px solid #e2e8f0;
+        border-radius: 5px;
+      }
+
+      .calculator button {
+        width: 100%;
+        padding: 10px;
+        background-color: #38b2ac;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+      }
+
+      .calculator button:hover {
+        background-color: #319795;
+      }
+
+      /* Enhanced Confetti Animation */
+      .confetti-piece {
+        position: absolute;
+        width: 10px;
+        height: 10px;
+        animation: confettiBlast 3s linear infinite;
+      }
+
+      @keyframes confettiBlast {
+        0% {
+          transform: translateY(100vh) rotate(0deg); /* Start from the bottom */
+          opacity: 1;
+        }
+        50% {
+          opacity: 1;
+        }
+        100% {
+          transform: translateY(-100vh) rotate(360deg); /* Move to the top */
+          opacity: 0; /* Fade out as it moves upward */
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Return Button -->
+    <button class="return-button" onclick="window.location.href='index.html';">
+      ← Back to Home
+    </button>
+
+    <!-- Pledge Counter -->
+    <div
+      id="pledge-counter"
+      class="fixed top-4 right-4 bg-teal-600 text-white px-4 py-2 rounded-lg shadow-md"
+    >
+      Pledges Taken: <span id="pledge-count">0</span>
+    </div>
+
+    <div class="container mx-auto p-6">
+      <!-- Title -->
+      <h1 class="text-4xl font-bold text-center text-teal-700 glow-title mb-8">
+        Global Warming Awareness
+      </h1>
+
+      <!-- Introduction Section -->
+      <section class="mb-12">
+        <h2 class="text-2xl font-bold text-teal-700 mb-4">
+          What is Global Warming?
+        </h2>
+        <p class="text-lg text-gray-700">
+          Global warming refers to the long-term rise in Earth's average
+          temperature due to human activities, primarily the burning of fossil
+          fuels, which increases greenhouse gas levels in the atmosphere.
+        </p>
+      </section>
+
+      <!-- Fun Facts Section -->
+      <section class="mb-12">
+        <h2 class="text-2xl font-bold text-teal-700 mb-4">Did You Know?</h2>
+        <div class="fact-box bg-white p-6 rounded-lg shadow-md">
+          <p id="rotating-fact" class="text-lg text-gray-700">
+            The last decade was the hottest in recorded history, and the Arctic
+            is warming twice as fast as the rest of the planet!
+          </p>
+        </div>
+      </section>
+
+      <!-- Prevention Tips Section -->
+      <section class="mb-12">
+        <h2 class="text-2xl font-bold text-teal-700 mb-4">How Can You Help?</h2>
+        <ul class="list-disc pl-6 text-lg text-gray-700">
+          <li>Reduce, reuse, and recycle to minimize waste.</li>
+          <li>Use energy-efficient appliances and light bulbs.</li>
+          <li>Plant trees and support reforestation projects.</li>
+          <li>Switch to renewable energy sources like solar and wind.</li>
+          <li>
+            Reduce car usage by walking, biking, or using public transport.
+          </li>
+        </ul>
+      </section>
+
+      <!-- Interactive Quiz Section -->
+      <section class="mb-12">
+        <h2 class="text-2xl font-bold text-teal-700 mb-4">
+          Test Your Knowledge!
+        </h2>
+        <div class="quiz-container">
+          <p id="quiz-question" class="text-lg text-gray-700 mb-4">
+            <!-- First question will be displayed here -->
+          </p>
+          <button
+            id="option1"
+            class="px-4 py-2 bg-teal-600 text-white rounded-lg shadow-md mb-2"
+            onclick="checkAnswer(0)"
+          ></button>
+          <button
+            id="option2"
+            class="px-4 py-2 bg-teal-600 text-white rounded-lg shadow-md mb-2"
+            onclick="checkAnswer(1)"
+          ></button>
+          <button
+            id="option3"
+            class="px-4 py-2 bg-teal-600 text-white rounded-lg shadow-md mb-2"
+            onclick="checkAnswer(2)"
+          ></button>
+          <p id="quiz-result" class="text-lg font-bold mt-4"></p>
+          <p id="fun-fact" class="text-lg text-gray-700 mt-4"></p>
+          <p id="quiz-score" class="text-lg font-bold mt-4 text-teal-700">
+            Score: 0
+          </p>
+          <div class="progress-bar">
+            <div id="progress-bar-fill" class="progress-bar-fill"></div>
+          </div>
+          <button
+            id="next-question"
+            class="px-4 py-2 bg-gray-600 text-white rounded-lg shadow-md mt-4 hover:bg-gray-700"
+            onclick="nextQuestion()"
+            style="display: none"
+          >
+            Next Question
+          </button>
+        </div>
+      </section>
+
+      <!-- Fun Animation Section -->
+      <section class="mb-12">
+        <h2 class="text-2xl font-bold text-teal-700 mb-4">A Fun Fact!</h2>
+        <div class="bg-white p-6 rounded-lg shadow-md">
+          <p class="text-lg text-gray-700">
+            If every person on Earth planted just one tree, we could offset a
+            significant amount of carbon emissions!
+          </p>
+        </div>
+      </section>
+
+      <!-- Carbon Footprint Calculator -->
+      <section class="calculator mb-12">
+        <h2 class="text-2xl font-bold text-teal-700 mb-4">
+          Estimate Your Monthly Carbon Footprint
+        </h2>
+        <div class="bg-white p-6 rounded-lg shadow-md">
+          <input
+            type="number"
+            id="electricity-usage"
+            placeholder="Electricity Usage (kWh per month)"
+            class="p-3 border border-gray-300 rounded-lg w-full mb-4"
+          />
+          <input
+            type="number"
+            id="car-mileage"
+            placeholder="Car Mileage (miles per month)"
+            class="p-3 border border-gray-300 rounded-lg w-full mb-4"
+          />
+          <button
+            onclick="calculateFootprint()"
+            class="px-4 py-2 bg-teal-600 text-white rounded-lg shadow-md hover:bg-teal-700 w-full"
+          >
+            Calculate Footprint
+          </button>
+          <p id="footprint-result" class="mt-4 text-lg text-gray-700"></p>
+          <p class="text-sm text-gray-500 mt-2">
+            * This calculator estimates your carbon footprint for one month.
+          </p>
+        </div>
+      </section>
+
+      <script>
+        // Carbon Footprint Calculator
+        function calculateFootprint() {
+          const electricityUsage = parseFloat(
+            document.getElementById("electricity-usage").value
+          );
+          const carMileage = parseFloat(
+            document.getElementById("car-mileage").value
+          );
+
+          if (isNaN(electricityUsage) || isNaN(carMileage)) {
+            document.getElementById("footprint-result").textContent =
+              "Please enter valid numbers for both fields.";
+            return;
+          }
+
+          const footprint = electricityUsage * 0.92 + carMileage * 0.79; // Example formula
+          document.getElementById(
+            "footprint-result"
+          ).textContent = `Your estimated monthly carbon footprint is ${footprint.toFixed(
+            2
+          )} kg CO2.`;
+        }
+      </script>
+
+      <!-- Call to Action -->
+      <section class="text-center">
+        <h2 class="text-2xl font-bold text-teal-700 mb-4">
+          Take Action Today!
+        </h2>
+        <p class="text-lg text-gray-700 mb-4">
+          Every small step counts. Start making a difference today for a better
+          tomorrow.
+        </p>
+        <button
+          id="pledge-button"
+          class="cta-button px-6 py-3 bg-teal-600 text-white rounded-lg shadow-md hover:bg-teal-700"
+          onclick="takePledge()"
+        >
+          Pledge to Help
+        </button>
+        <p id="pledge-message" class="text-lg text-gray-700 mt-4"></p>
+        <!-- Reset Button (Hidden by Default) -->
+        <button
+          id="reset-button"
+          class="cta-button px-6 py-3 bg-red-600 text-white rounded-lg shadow-md hover:bg-red-700 mt-4"
+          onclick="resetPledge()"
+          style="display: none"
+        >
+          Reset Pledge
+        </button>
+      </section>
+
+      <script>
+        // Initialize pledge count and reset to zero
+        pledgeCount = parseInt(localStorage.getItem("pledgeCount")) || 0;
+        hasPledged = localStorage.getItem("hasPledged") === "true";
+
+        // Update the pledge counter on the page
+        function updatePledgeCounter() {
+          document.getElementById("pledge-count").textContent = pledgeCount;
+        }
+
+        // Function to handle the pledge button click
+        function takePledge() {
+          if (!hasPledged) {
+            pledgeCount++;
+            localStorage.setItem("pledgeCount", pledgeCount); // Save to localStorage
+            localStorage.setItem("hasPledged", "true"); // Mark as pledged
+            hasPledged = true;
+            updatePledgeCounter();
+            document.getElementById("pledge-button").disabled = true;
+            document.getElementById("pledge-message").textContent =
+              "Thank you for taking the pledge to help our planet!";
+            showConfetti(); // Trigger confetti animation
+          }
+        }
+
+        // Function to reset the pledge counter and status
+        function resetPledge() {
+          localStorage.setItem("pledgeCount", 0);
+          localStorage.setItem("hasPledged", "false");
+          pledgeCount = 0;
+          hasPledged = false;
+          updatePledgeCounter();
+          document.getElementById("pledge-button").disabled = false;
+          document.getElementById("pledge-message").textContent = "";
+          document.getElementById("reset-button").style.display = "none";
+          alert("Pledge has been reset!");
+        }
+
+        // Function to show the reset button for developers
+        function enableDeveloperMode() {
+          const resetButton = document.getElementById("reset-button");
+          resetButton.style.display = "block"; // Show the reset button
+        }
+
+        // Listen for a secret key combination (e.g., Ctrl + Shift + V)
+        document.addEventListener("keydown", (event) => {
+          if (event.ctrlKey && event.shiftKey && event.key === "V") {
+            enableDeveloperMode();
+            alert("Developer mode enabled. Reset button is now visible.");
+          }
+        });
+
+        // Disable the pledge button if the user has already pledged
+        function checkPledgeStatus() {
+          if (hasPledged) {
+            document.getElementById("pledge-button").disabled = true;
+            document.getElementById("pledge-message").textContent =
+              "You have already pledged to help our planet. Thank you!";
+          }
+        }
+
+        // Confetti Animation
+        function showConfetti() {
+          const confettiContainer =
+            document.getElementById("confetti-container");
+          for (let i = 0; i < 100; i++) {
+            const confettiPiece = document.createElement("div");
+            confettiPiece.classList.add("confetti-piece");
+            confettiPiece.style.left = Math.random() * 100 + "vw"; // Random horizontal position
+            confettiPiece.style.top = Math.random() > 0.5 ? "100vh" : "-10vh"; // Randomly start from top or bottom
+            confettiPiece.style.backgroundColor = getRandomColor();
+            confettiPiece.style.animationDelay = Math.random() * 3 + "s"; // Random delay
+            confettiContainer.appendChild(confettiPiece);
+          }
+          setTimeout(() => {
+            confettiContainer.innerHTML = ""; // Clear confetti after animation
+          }, 3000);
+        }
+
+        function getRandomColor() {
+          const colors = [
+            "#ff6f61",
+            "#ffcc00",
+            "#66b3ff",
+            "#6effb3",
+            "#ff66d9",
+          ];
+          return colors[Math.floor(Math.random() * colors.length)];
+        }
+
+        // Reset pledge counter and check pledge status on page load
+        updatePledgeCounter();
+        checkPledgeStatus();
+      </script>
+    </div>
+
+    <!-- Confetti Animation -->
+    <div id="confetti-container" class="confetti"></div>
+
+    <script>
+      const funFacts = [
+        "The Arctic is warming twice as fast as the rest of the planet.",
+        "Burning fossil fuels releases carbon dioxide, the main greenhouse gas.",
+        "Forests cover about 31% of the Earth's surface and are vital for absorbing CO2.",
+        "Hydropower accounts for about 60% of global renewable energy production.",
+        "Melting ice caps contribute to rising sea levels, threatening coastal areas.",
+      ];
+
+      let currentFactIndex = 0;
+
+      function rotateFacts() {
+        currentFactIndex = (currentFactIndex + 1) % funFacts.length;
+        document.getElementById("rotating-fact").textContent =
+          funFacts[currentFactIndex];
+      }
+
+      setInterval(rotateFacts, 5000); // Rotate facts every 5 seconds
+
+      // Enhanced Confetti Animation
+      function showConfetti() {
+        const confettiContainer = document.getElementById("confetti-container");
+        for (let i = 0; i < 100; i++) {
+          const confettiPiece = document.createElement("div");
+          confettiPiece.classList.add("confetti-piece");
+          confettiPiece.style.left = Math.random() * 100 + "vw"; // Random horizontal position
+          confettiPiece.style.backgroundColor = getRandomColor();
+          confettiPiece.style.animationDelay = Math.random() * 3 + "s"; // Random delay
+          confettiContainer.appendChild(confettiPiece);
+        }
+        setTimeout(() => {
+          confettiContainer.innerHTML = ""; // Clear confetti after animation
+        }, 3000);
+      }
+
+      function getRandomColor() {
+        const colors = ["#ff6f61", "#ffcc00", "#66b3ff", "#6effb3", "#ff66d9"];
+        return colors[Math.floor(Math.random() * colors.length)];
+      }
+
+      function completeQuiz() {
+        showConfetti();
+        alert("Congratulations! You've completed the quiz!");
+      }
+
+      const quizData = [
+        {
+          question: "What is the primary cause of global warming?",
+          options: [
+            "Deforestation",
+            "Burning Fossil Fuels",
+            "Volcanic Eruptions",
+          ],
+          correct: 1,
+          funFact:
+            "Burning fossil fuels releases carbon dioxide, the main greenhouse gas.",
+        },
+        {
+          question: "Which gas is the most responsible for global warming?",
+          options: ["Oxygen", "Carbon Dioxide", "Nitrogen"],
+          correct: 1,
+          funFact:
+            "Carbon dioxide traps heat in the atmosphere, causing the greenhouse effect.",
+        },
+        {
+          question:
+            "What percentage of the Earth's surface is covered by forests?",
+          options: ["31%", "50%", "10%"],
+          correct: 0,
+          funFact:
+            "Forests cover about 31% of the Earth's surface and are vital for absorbing CO2.",
+        },
+        {
+          question: "Which renewable energy source is the most widely used?",
+          options: ["Solar", "Wind", "Hydropower"],
+          correct: 2,
+          funFact:
+            "Hydropower accounts for about 60% of global renewable energy production.",
+        },
+        {
+          question: "What is the main effect of melting polar ice caps?",
+          options: [
+            "Rising sea levels",
+            "Increased rainfall",
+            "More earthquakes",
+          ],
+          correct: 0,
+          funFact:
+            "Melting ice caps contribute to rising sea levels, threatening coastal areas.",
+        },
+        {
+          question:
+            "Which sector contributes the most to greenhouse gas emissions?",
+          options: ["Transportation", "Agriculture", "Energy Production"],
+          correct: 2,
+          funFact:
+            "Energy production is the largest contributor to greenhouse gas emissions globally.",
+        },
+        {
+          question: "How much of the Earth's water is freshwater?",
+          options: ["3%", "10%", "25%"],
+          correct: 0,
+          funFact:
+            "Only 3% of the Earth's water is freshwater, and most of it is frozen in glaciers.",
+        },
+        {
+          question: "What is the largest source of renewable energy globally?",
+          options: ["Solar", "Hydropower", "Wind"],
+          correct: 1,
+          funFact:
+            "Hydropower is the largest source of renewable energy, providing about 60% of global renewable energy.",
+        },
+        {
+          question: "Which country emits the most carbon dioxide?",
+          options: ["India", "China", "United States"],
+          correct: 1,
+          funFact:
+            "China is the largest emitter of carbon dioxide, followed by the United States.",
+        },
+        {
+          question: "What is the main purpose of the Paris Agreement?",
+          options: [
+            "To reduce global poverty",
+            "To combat climate change",
+            "To promote renewable energy",
+          ],
+          correct: 1,
+          funFact:
+            "The Paris Agreement aims to limit global warming to below 2°C compared to pre-industrial levels.",
+        },
+      ];
+
+      let currentQuestionIndex = 0;
+      let score = 0;
+
+      function loadQuestion() {
+        const questionData = quizData[currentQuestionIndex];
+        document.getElementById("quiz-question").textContent =
+          questionData.question;
+        document.getElementById("option1").textContent =
+          questionData.options[0];
+        document.getElementById("option2").textContent =
+          questionData.options[1];
+        document.getElementById("option3").textContent =
+          questionData.options[2];
+        document.getElementById("quiz-result").textContent = "";
+        document.getElementById("fun-fact").textContent = "";
+        document.getElementById("next-question").style.display = "none";
+        updateProgressBar();
+      }
+
+      function checkAnswer(selectedOption) {
+        const questionData = quizData[currentQuestionIndex];
+        const result = document.getElementById("quiz-result");
+        const funFact = document.getElementById("fun-fact");
+
+        document.getElementById("option1").disabled = true;
+        document.getElementById("option2").disabled = true;
+        document.getElementById("option3").disabled = true;
+
+        if (selectedOption === questionData.correct) {
+          result.textContent = "Correct! Great job!";
+          result.style.color = "green";
+          score++;
+        } else {
+          result.textContent = `Incorrect. The correct answer is: ${
+            questionData.options[questionData.correct]
+          }`;
+          result.style.color = "red";
+        }
+
+        funFact.textContent = `Fun Fact: ${questionData.funFact}`;
+        document.getElementById("quiz-score").textContent = `Score: ${score}`;
+        document.getElementById("next-question").style.display = "block";
+      }
+
+      function nextQuestion() {
+        currentQuestionIndex++;
+        if (currentQuestionIndex < quizData.length) {
+          document.getElementById("option1").disabled = false;
+          document.getElementById("option2").disabled = false;
+          document.getElementById("option3").disabled = false;
+          loadQuestion();
+        } else {
+          document.getElementById("quiz-question").textContent =
+            "You've completed the quiz! Well done!";
+          document.getElementById("option1").style.display = "none";
+          document.getElementById("option2").style.display = "none";
+          document.getElementById("option3").style.display = "none";
+          document.getElementById(
+            "fun-fact"
+          ).textContent = `Final Score: ${score}/${quizData.length}`;
+          document.getElementById("next-question").style.display = "none";
+          completeQuiz();
+        }
+      }
+
+      function updateProgressBar() {
+        const progress = ((currentQuestionIndex + 1) / quizData.length) * 100;
+        document.getElementById(
+          "progress-bar-fill"
+        ).style.width = `${progress}%`;
+      }
+
+      // Carbon Footprint Calculator
+      function calculateFootprint() {
+        const electricityUsage = parseFloat(
+          document.getElementById("electricity-usage").value
+        );
+        const carMileage = parseFloat(
+          document.getElementById("car-mileage").value
+        );
+
+        if (isNaN(electricityUsage) || isNaN(carMileage)) {
+          document.getElementById("footprint-result").textContent =
+            "Please enter valid numbers for both fields.";
+          return;
+        }
+
+        const footprint = electricityUsage * 0.92 + carMileage * 0.79; // Example formula
+        document.getElementById(
+          "footprint-result"
+        ).textContent = `Your estimated carbon footprint is ${footprint.toFixed(
+          2
+        )} kg CO2.`;
+      }
+
+      localStorage.setItem("pledgeCount", 0);
+      let pledgeCount = parseInt(localStorage.getItem("pledgeCount")) || 0;
+      let hasPledged = localStorage.getItem("hasPledged") === "true";
+
+      // Update the pledge counter on the page
+      function updatePledgeCounter() {
+        document.getElementById("pledge-count").textContent = pledgeCount;
+      }
+
+      // Function to handle the pledge button click
+      function takePledge() {
+        if (!hasPledged) {
+          pledgeCount++;
+          localStorage.setItem("pledgeCount", pledgeCount); // Save to localStorage
+          localStorage.setItem("hasPledged", "true"); // Mark as pledged
+          hasPledged = true;
+          updatePledgeCounter();
+          document.getElementById("pledge-button").disabled = true;
+          document.getElementById("pledge-message").textContent =
+            "Thank you for taking the pledge to help our planet!";
+          showConfetti(); // Trigger confetti animation
+        }
+      }
+
+      // Function to reset the pledge counter and status
+      function resetPledge() {
+        localStorage.setItem("pledgeCount", 0);
+        localStorage.setItem("hasPledged", "false");
+        pledgeCount = 0;
+        hasPledged = false;
+        updatePledgeCounter();
+        document.getElementById("pledge-button").disabled = false;
+        document.getElementById("pledge-message").textContent = "";
+        document.getElementById("reset-button").style.display = "none"; // Hide the reset button
+        alert("Pledge has been reset!");
+      }
+
+      // Disable the pledge button if the user has already pledged
+      function checkPledgeStatus() {
+        if (hasPledged) {
+          document.getElementById("pledge-button").disabled = true;
+          document.getElementById("pledge-message").textContent =
+            "You have already pledged to help our planet. Thank you!";
+        }
+      }
+      // Confetti Animation
+      function showConfetti() {
+        const confettiContainer = document.getElementById("confetti-container");
+        for (let i = 0; i < 100; i++) {
+          const confettiPiece = document.createElement("div");
+          confettiPiece.classList.add("confetti-piece");
+          confettiPiece.style.left = Math.random() * 100 + "vw"; // Random horizontal position
+          confettiPiece.style.top = Math.random() > 0.5 ? "100vh" : "-10vh"; // Randomly start from top or bottom
+          confettiPiece.style.backgroundColor = getRandomColor();
+          confettiPiece.style.animationDelay = Math.random() * 3 + "s"; // Random delay
+          confettiContainer.appendChild(confettiPiece);
+        }
+        setTimeout(() => {
+          confettiContainer.innerHTML = ""; // Clear confetti after animation
+        }, 3000);
+      }
+
+      function getRandomColor() {
+        const colors = ["#ff6f61", "#ffcc00", "#66b3ff", "#6effb3", "#ff66d9"];
+        return colors[Math.floor(Math.random() * colors.length)];
+      }
+
+      // Reset pledge counter and check pledge status on page load
+      updatePledgeCounter();
+      checkPledgeStatus();
+
+      loadQuestion();
+    </script>
+  </body>
+</html>

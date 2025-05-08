@@ -74,6 +74,7 @@
         border-radius: 5px;
         z-index: 1000;
       }
+
       #back-button {
         top: 10px;
         left: 10px;
@@ -95,6 +96,42 @@
       #clear-markers-button:hover,
       #map-style-button:hover {
         background-color: #004d40;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 10px;
+        font-family: Arial, sans-serif;
+        font-size: 14px;
+        text-align: left;
+      }
+
+      table thead {
+        background-color: #00796b;
+        color: white;
+      }
+
+      table th,
+      table td {
+        padding: 10px;
+        border: 1px solid #ddd;
+      }
+
+      table tbody tr:nth-child(even) {
+        background-color: #f9f9f9;
+      }
+
+      table tbody tr:nth-child(odd) {
+        background-color: #ffffff;
+      }
+
+      table tbody tr:hover {
+        background-color: #e0f2f1;
+      }
+
+      table th {
+        text-transform: uppercase;
+        font-weight: bold;
       }
     </style>
   </head>
@@ -218,22 +255,31 @@
             const components = pollution.components;
 
             content += `
-              <h4>Air Quality</h4>
-              <p><strong>Air Quality Index (AQI):</strong> ${aqi} (${
+      <h4>Air Quality</h4>
+      <p><strong>Air Quality Index (AQI):</strong> ${aqi} (${
               aqiLevels[aqi - 1] || "Unknown"
             })</p>
-              <p><strong>Components:</strong></p>
-              <ul>
-                <li>CO: ${components.co || "N/A"} µg/m³</li>
-                <li>NO: ${components.no || "N/A"} µg/m³</li>
-                <li>NO<sub>2</sub>: ${components.no2 || "N/A"} µg/m³</li>
-                <li>O<sub>3</sub>: ${components.o3 || "N/A"} µg/m³</li>
-                <li>SO<sub>2</sub>: ${components.so2 || "N/A"} µg/m³</li>
-                <li>PM<sub>2.5</sub>: ${components.pm2_5 || "N/A"} µg/m³</li>
-                <li>PM<sub>10</sub>: ${components.pm10 || "N/A"} µg/m³</li>
-                <li>NH<sub>3</sub>: ${components.nh3 || "N/A"} µg/m³</li>
-              </ul>
-            `;
+      <table border="1" style="width: 100%; border-collapse: collapse;">
+        <thead>
+          <tr>
+            <th>Component</th>
+            <th>Concentration (µg/m³)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>CO</td><td>${components.co || "N/A"}</td></tr>
+          <tr><td>NO</td><td>${components.no || "N/A"}</td></tr>
+          <tr><td>NO<sub>2</sub></td><td>${components.no2 || "N/A"}</td></tr>
+          <tr><td>O<sub>3</sub></td><td>${components.o3 || "N/A"}</td></tr>
+          <tr><td>SO<sub>2</sub></td><td>${components.so2 || "N/A"}</td></tr>
+          <tr><td>PM<sub>2.5</sub></td><td>${
+            components.pm2_5 || "N/A"
+          }</td></tr>
+          <tr><td>PM<sub>10</sub></td><td>${components.pm10 || "N/A"}</td></tr>
+          <tr><td>NH<sub>3</sub></td><td>${components.nh3 || "N/A"}</td></tr>
+        </tbody>
+      </table>
+    `;
           } else {
             content +=
               "<p>No air pollution data available for this location.</p>";
@@ -241,7 +287,6 @@
 
           pollutionContainer.innerHTML = content;
         }
-
         map.on("click", async function (event) {
           const { lat, lng } = event.latlng;
           const locationName = await fetchLocationNameByCoords(lat, lng);
@@ -266,7 +311,9 @@
             navigator.geolocation.getCurrentPosition(
               async (position) => {
                 const { latitude, longitude } = position.coords;
-                map.setView([latitude, longitude], 10);
+
+                // Set the map view to the user's location with a closer zoom level
+                map.setView([latitude, longitude], 15);
 
                 const locationName = await fetchLocationNameByCoords(
                   latitude,
@@ -280,17 +327,31 @@
                     )}, Lng: ${longitude.toFixed(4)}`
                   : `Lat: ${latitude.toFixed(4)}, Lng: ${longitude.toFixed(4)}`;
 
+                // Add a marker at the user's location
                 L.marker([latitude, longitude])
                   .addTo(markers)
                   .bindPopup(popupContent)
                   .openPopup();
 
+                // Display pollution data for the user's location
                 displayPollutionData(pollution, locationName);
               },
-              () => {
-                alert(
-                  "Could not fetch your location. Please ensure location services are enabled."
-                );
+              (error) => {
+                // Handle geolocation errors
+                let errorMessage = "Could not fetch your location.";
+                if (error.code === 1) {
+                  errorMessage =
+                    "Permission denied. Please enable location services.";
+                } else if (error.code === 2) {
+                  errorMessage = "Position unavailable. Please try again.";
+                } else if (error.code === 3) {
+                  errorMessage = "Request timed out. Please try again.";
+                }
+                alert(errorMessage);
+              },
+              {
+                enableHighAccuracy: true, // Request high accuracy for better results
+                timeout: 10000, // Set a timeout for the request
               }
             );
           } else {
