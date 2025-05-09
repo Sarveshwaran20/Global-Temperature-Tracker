@@ -12,18 +12,18 @@
     <style>
       /* General Styling */
       body {
-        font-family: 'Roboto', sans-serif;
+        font-family: "Roboto", sans-serif;
         background: linear-gradient(120deg, #f0f9ff, #c2e9fb);
         color: #2d3748;
         margin: 0;
         padding: 0;
         line-height: 1.6;
-        background-size: 400% 400%;
-        animation: gradientBG 10s ease infinite;
       }
 
-      @keyframes gradientBG {
-        0% {
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
       }
 
       h1,
@@ -38,12 +38,20 @@
       }
 
       h2 {
-        font-size: clamp(1.5rem, 4vw, 2.5rem); /* Dynamically adjust font size */
+        font-size: clamp(
+          1.5rem,
+          4vw,
+          2.5rem
+        ); /* Dynamically adjust font size */
         margin-bottom: 15px;
       }
 
       p {
-        font-size: clamp(0.9rem, 2.5vw, 1.2rem); /* Dynamically adjust font size */
+        font-size: clamp(
+          0.9rem,
+          2.5vw,
+          1.2rem
+        ); /* Dynamically adjust font size */
         color: #4a5568;
         margin-bottom: 15px;
       }
@@ -106,7 +114,7 @@
       }
 
       .timeline::before {
-        content: '';
+        content: "";
         position: absolute;
         left: 50%;
         top: 0;
@@ -146,7 +154,7 @@
       }
 
       .timeline-event::after {
-        content: '';
+        content: "";
         position: absolute;
         top: 20px;
         width: 10px;
@@ -270,32 +278,21 @@
         width: 10px;
         height: 10px;
         background-color: #ff6f61;
-        animation: confettiFall 3s linear infinite;
+        animation: confettiBlast 3s linear infinite;
       }
 
-      @keyframes confettiFall {
+      @keyframes confettiBlast {
         0% {
-          transform: translateY(-100vh) rotate(0deg);
+          transform: translateY(100vh) rotate(0deg); /* Start from the bottom */
+          opacity: 1;
+        }
+        50% {
+          opacity: 1;
         }
         100% {
-          transform: translateY(100vh) rotate(360deg);
+          transform: translateY(-100vh) rotate(360deg); /* Move to the top */
+          opacity: 0; /* Fade out as it moves upward */
         }
-      }
-
-      /* Quiz styling */
-      .quiz-container {
-        background-color: #f0f9ff;
-        padding: 20px;
-        border-radius: 10px;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-      }
-
-      .quiz-container button {
-        transition: background-color 0.3s ease;
-      }
-
-      .quiz-container button:hover {
-        background-color: #38b2ac;
       }
 
       /* Progress bar styling */
@@ -325,7 +322,6 @@
         border-radius: 5px;
         box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
         transition: background-color 0.3s ease, transform 0.2s ease;
-        z-index: 1000; /* Ensure it stays above other elements */
       }
 
       .return-button:hover {
@@ -396,230 +392,62 @@
         }
       }
 
-      /* Timeline Styling */
-      .timeline {
+      /* Carousel Styling */
+      .carousel {
         position: relative;
-        margin: 20px 0;
-        padding: 20px 0;
-      }
-
-      .timeline::before {
-        content: '';
-        position: absolute;
-        left: 50%;
-        top: 0;
-        bottom: 0;
-        width: 4px;
-        background: #38b2ac;
-        transform: translateX(-50%);
-      }
-
-      .timeline-event {
-        position: relative;
-        margin: 20px 0;
-        padding: 10px 20px;
-        background: #ffffff;
+        overflow: hidden;
+        width: 100%;
+        height: 200px;
+        background-color: #ffffff;
         border-radius: 10px;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-        width: 45%;
-        animation: slideIn 1s ease-in-out;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
       }
 
-      .timeline-event.left {
-        left: 0;
-        animation-name: slideInLeft;
+      .carousel-content {
+        display: flex;
+        transition: transform 0.5s ease-in-out;
       }
 
-      .timeline-event.right {
-        left: 55%;
-        animation-name: slideInRight;
+      .carousel-item {
+        min-width: 100%;
+        text-align: center;
+        padding: 20px;
+        font-size: 1.2rem;
+        color: #2d3748;
       }
 
-      .timeline-event h3 {
-        margin: 0 0 10px;
-        color: #2c7a7b;
-      }
-
-      .timeline-event p {
-        margin: 0;
-        color: #4a5568;
-      }
-
-      .timeline-event::after {
-        content: '';
+      .carousel-controls {
         position: absolute;
-        top: 15px;
-        width: 10px;
-        height: 10px;
-        background: #38b2ac;
+        top: 50%;
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        transform: translateY(-50%);
+      }
+
+      .carousel-controls button {
+        background-color: rgba(0, 0, 0, 0.5);
+        color: white;
+        border: none;
+        padding: 10px;
         border-radius: 50%;
-        box-shadow: 0 0 0 4px #ffffff;
+        cursor: pointer;
       }
 
-      .timeline-event.left::after {
-        right: -6px;
+      .carousel-controls button:hover {
+        background-color: rgba(0, 0, 0, 0.8);
       }
 
-      .timeline-event.right::after {
-        left: -6px;
-      }
-
-      /* Slide-in Animations */
-      @keyframes slideInLeft {
-        from {
-          transform: translateX(-100%);
-          opacity: 0;
-        }
-        to {
-          transform: translateX(0);
-          opacity: 1;
-        }
-      }
-
-      @keyframes slideInRight {
-        from {
-          transform: translateX(100%);
-          opacity: 0;
-        }
-        to {
-          transform: translateX(0);
-          opacity: 1;
-        }
-      }
-
-      /* Timeline Styling */
-      .timeline {
-        position: relative;
-        margin: 20px 0;
-        padding: 20px 0;
-      }
-
-      .timeline::before {
-        content: '';
-        position: absolute;
-        left: 50%;
-        top: 0;
-        bottom: 0;
-        width: 4px;
-        background: #38b2ac;
-        transform: translateX(-50%);
-      }
-
-      .timeline-event {
-        position: relative;
-        margin: 20px 0;
-        padding: 20px 20px;
-        background: linear-gradient(120deg, #e0f7fa, #ffffff);
+      /* Poll Styling */
+      .poll {
+        background-color: #ffffff;
+        padding: 20px;
         border-radius: 10px;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-        width: 45%;
-        animation: slideIn 1s ease-in-out;
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
       }
 
-      .timeline-event:hover {
-        transform: scale(1.05);
-        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
-      }
-
-      .timeline-event.left {
-        left: 0;
-        animation-name: slideInLeft;
-      }
-
-      .timeline-event.right {
-        left: 55%;
-        animation-name: slideInRight;
-      }
-
-      .timeline-event h3 {
-        margin: 0 0 10px;
-        color: #2c7a7b;
-      }
-
-      .timeline-event p {
-        margin: 0;
-        color: #4a5568;
-      }
-
-      .timeline-event::after {
-        content: '';
-        position: absolute;
-        top: 15px;
-        width: 10px;
-        height: 10px;
-        background: #38b2ac;
-        border-radius: 50%;
-        box-shadow: 0 0 0 4px #ffffff;
-      }
-
-      .timeline-event.left::after {
-        right: -6px;
-      }
-
-      .timeline-event.right::after {
-        left: -6px;
-      }
-
-      /* Icon Styling */
-      .icon-container {
-        font-size: 24px;
-        margin-bottom: 10px;
-      }
-
-      /* Slide-in Animations */
-      @keyframes slideInLeft {
-        from {
-          transform: translateX(-100%);
-          opacity: 0;
-        }
-        to {
-          transform: translateX(0);
-          opacity: 1;
-        }
-      }
-
-      @keyframes slideInRight {
-        from {
-          transform: translateX(100%);
-          opacity: 0;
-        }
-        to {
-          transform: translateX(0);
-          opacity: 1;
-        }
-      }
-
-      /* Fixed position for the pledge counter */
-      #pledge-counter {
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        background-color: #38b2ac;
-        color: white;
-        padding: 10px 20px;
-        border-radius: 5px;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-        z-index: 1000; /* Ensure it stays above other elements */
-      }
-
-      /* Fixed position for the back to home button */
-      .return-button {
-        position: fixed;
-        top: 20px;
-        left: 20px;
-        background-color: #4fd1c5;
-        color: white;
-        padding: 10px 20px;
-        border-radius: 5px;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-        transition: background-color 0.3s ease, transform 0.2s ease;
-        z-index: 1000; /* Ensure it stays above other elements */
-      }
-
-      .return-button:hover {
-        background-color: #38b2ac;
-        transform: scale(1.1);
+      .poll button {
+        margin-top: 10px;
       }
     </style>
   </head>
@@ -645,12 +473,23 @@
 
       <!-- Introduction Section -->
       <section class="mb-12">
-        <h2 class="text-2xl font-bold text-teal-700 mb-4">What is Global Warming?</h2>
+        <h2 class="text-2xl font-bold text-teal-700 mb-4">
+          What is Global Warming?
+        </h2>
         <p class="text-lg text-gray-700">
-          Global warming refers to the long-term increase in Earth's average surface temperature due to human activities, primarily the burning of fossil fuels such as coal, oil, and gas. This process releases greenhouse gases like carbon dioxide (CO<sub>2</sub>) and methane (CH<sub>4</sub>) into the atmosphere, trapping heat and disrupting the planet's natural climate systems.
+          Global warming refers to the long-term increase in Earth's average
+          surface temperature due to human activities, primarily the burning of
+          fossil fuels such as coal, oil, and gas. This process releases
+          greenhouse gases like carbon dioxide (CO<sub>2</sub>) and methane
+          (CH<sub>4</sub>) into the atmosphere, trapping heat and disrupting the
+          planet's natural climate systems.
         </p>
         <p class="text-lg text-gray-700">
-          The consequences of global warming include rising sea levels, more frequent and severe weather events, loss of biodiversity, and disruptions to ecosystems and human societies. Addressing global warming requires global cooperation, innovation, and a commitment to reducing greenhouse gas emissions.
+          The consequences of global warming include rising sea levels, more
+          frequent and severe weather events, loss of biodiversity, and
+          disruptions to ecosystems and human societies. Addressing global
+          warming requires global cooperation, innovation, and a commitment to
+          reducing greenhouse gas emissions.
         </p>
       </section>
 
@@ -666,41 +505,18 @@
       </section>
 
       <!-- Fun Facts Section -->
-      <section class="mb-12">
-        <h2 class="text-2xl font-bold text-teal-700 mb-4">Did You Know?</h2>
-        <div class="fact-box bg-white p-6 rounded-lg shadow-md">
-          <ul class="list-disc pl-6 text-lg text-gray-700">
-            <li>The Earth's average temperature has risen by 1.1°C since the late 19th century.</li>
-            <li>Carbon dioxide levels in the atmosphere are at their highest in 2 million years.</li>
-            <li>Sea levels have risen by about 8 inches (20 cm) since 1880, and the rate of rise is accelerating.</li>
-            <li>Global warming is causing the Arctic ice to shrink by 13% per decade.</li>
-            <li>Renewable energy sources like solar and wind are now the fastest-growing energy sectors worldwide.</li>
-          </ul>
-        </div>
-      </section>
 
       <!-- Prevention Tips Section -->
-      <section class="mb-12 text-left"></section>
+      <section class="mb-12">
         <h2 class="text-2xl font-bold text-teal-700 mb-4">How Can You Help?</h2>
         <ul class="list-disc pl-6 text-lg text-gray-700">
           <li>Reduce, reuse, and recycle to minimize waste.</li>
           <li>Use energy-efficient appliances and light bulbs.</li>
           <li>Plant trees and support reforestation projects.</li>
           <li>Switch to renewable energy sources like solar and wind.</li>
-          <li>Reduce car usage by walking, biking, or using public transport.</li>
-        </ul>
-      </section>
-
-      <!-- Prevention Tips Section -->
-      <section class="mb-12">
-        <h2 class="text-2xl font-bold text-teal-700 mb-4">How Can You Help?</h2>
-        <ul class="list-disc pl-6 text-lg text-gray-700">
-          <li>Adopt energy-efficient practices, such as using LED bulbs and energy-saving appliances.</li>
-          <li>Support renewable energy initiatives like solar, wind, and hydropower.</li>
-          <li>Reduce your carbon footprint by using public transportation, carpooling, or biking.</li>
-          <li>Plant trees and support reforestation projects to absorb CO<sub>2</sub> from the atmosphere.</li>
-          <li>Advocate for policies that promote sustainability and reduce greenhouse gas emissions.</li>
-          <li>Educate others about the importance of combating climate change and taking action.</li>
+          <li>
+            Reduce car usage by walking, biking, or using public transport.
+          </li>
         </ul>
       </section>
 
@@ -709,7 +525,7 @@
         <h2 class="text-2xl font-bold text-teal-700 mb-4">
           Test Your Knowledge!
         </h2>
-        <div class="quiz-container">
+        <div class="quiz-container bg-white p-6 rounded-lg shadow-md border border-gray-300">
           <p id="quiz-question" class="text-lg text-gray-700 mb-4">
             <!-- First question will be displayed here -->
           </p>
@@ -758,28 +574,22 @@
         </div>
       </section>
 
-      <!-- Spinning Earth Animation -->
-      <div class="spinning-earth mx-auto my-6"></div>
-
-      <!-- Leaderboard Section -->
-      
-
       <!-- Carbon Footprint Calculator -->
       <section class="calculator mb-12">
         <h2 class="text-2xl font-bold text-teal-700 mb-4">
-          Estimate Your Monthly Carbon Footprint
+          Estimate Your Carbon Footprint
         </h2>
         <div class="bg-white p-6 rounded-lg shadow-md">
           <input
             type="number"
             id="electricity-usage"
-            placeholder="Electricity Usage (kWh per month)"
+            placeholder="Electricity Usage (kWh)"
             class="p-3 border border-gray-300 rounded-lg w-full mb-4"
           />
           <input
             type="number"
             id="car-mileage"
-            placeholder="Car Mileage (miles per month)"
+            placeholder="Car Mileage (miles)"
             class="p-3 border border-gray-300 rounded-lg w-full mb-4"
           />
           <button
@@ -789,13 +599,26 @@
             Calculate Footprint
           </button>
           <p id="footprint-result" class="mt-4 text-lg text-gray-700"></p>
-          <p class="text-sm text-gray-500 mt-2">
-            * This calculator estimates your carbon footprint for one month.
-          </p>
         </div>
       </section>
 
-      <!-- Climate Change Timeline Section -->
+   <!-- Interactive Poll -->
+      <section class="mb-12">
+        <h2 class="text-2xl font-bold text-teal-700 mb-4">What Do You Think?</h2>
+        <div class="poll">
+          <p class="text-lg text-gray-700">What is the most effective way to combat global warming?</p>
+          <button id="renewable-button" class="cta-button" onclick="vote('Renewable Energy')">Invest in Renewable Energy</button>
+          <span id="renewable-votes" class="text-lg text-gray-700 ml-2">0 votes</span>
+          <br />
+          <button id="reforestation-button" class="cta-button" onclick="vote('Reforestation')">Plant More Trees</button>
+          <span id="reforestation-votes" class="text-lg text-gray-700 ml-2">0 votes</span>
+          <br />
+          <button id="emissions-button" class="cta-button" onclick="vote('Reduce Emissions')">Reduce Carbon Emissions</button>
+          <span id="emissions-votes" class="text-lg text-gray-700 ml-2">0 votes</span>
+          <p id="poll-result" class="mt-4 text-lg text-gray-700"></p>
+        </div>
+      </section>
+
       <section class="mb-12">
         <h2 class="text-2xl font-bold text-teal-700 mb-4 text-center glow-title">
           Climate Change Timeline
@@ -841,265 +664,63 @@
               🌳
             </div>
             <h3>2023</h3>
-            <p>Global reforestation initiatives gained momentum to combat deforestation.</p><h3>2025</h3>
-          </div>Breakthroughs in battery technology accelerated the adoption of renewable energy.</p>
+            <p>Global reforestation initiatives gained momentum to combat deforestation.</p>
+          </div>
           <div class="timeline-event left">
             <div class="icon-container">
               🌊
             </div>
-            <h3>2024</h3>n -->
-            <p>Major coastal cities implemented flood defenses to combat rising sea levels.</p>ass="text-center">
+            <h3>2024</h3>
+            <p>Major coastal cities implemented flood defenses to combat rising sea levels.</p>
           </div>
           <div class="timeline-event right">
             <div class="icon-container">
-          Every small step counts. Start making a difference today for a betterext-gray-700 mb-4">
-          tomorrow.
-        </p>
-        <button
-          id="pledge-button"<button
-          class="cta-button px-6 py-3 bg-teal-600 text-white rounded-lg shadow-md hover:bg-teal-700"
-          onclick="takePledge()"  class="cta-button px-6 py-3 bg-teal-600 text-white rounded-lg shadow-md hover:bg-teal-700"
-        >k="takePledge()"
-          Pledge to Help
-        </button>          Pledge to Help
-        <p id="pledge-message" class="text-lg text-gray-700 mt-4"></p>
-        <!-- Reset Button (Hidden by Default) -->700 mt-4"></p>
-        <button        <!-- Reset Button (Hidden by Default) -->
-          id="reset-button"ton
-          class="cta-button px-6 py-3 bg-red-600 text-white rounded-lg shadow-md hover:bg-red-700 mt-4"on"
-          onclick="resetPledge()" class="cta-button px-6 py-3 bg-red-600 text-white rounded-lg shadow-md hover:bg-red-700 mt-4"
-          style="display: none;" 
-        play: none;" 
-         > Reset Pledge</button>
-        
+              🔋
+            </div>
+            <h3>2025</h3>
+            <p>Breakthroughs in battery technology accelerated the adoption of renewable energy.</p>
+          </div>
+        </div>
       </section>
-    </div>ion>
+
 
     <!-- Confetti Animation -->
     <div id="confetti-container" class="confetti"></div>
-d="confetti-container" class="confetti"></div>
+ <!-- Call to Action -->
+      <section class="text-center">
+        <h2 class="text-2xl font-bold text-teal-700 mb-4">
+          Take Action Today!
+        </h2>
+        <p class="text-lg text-gray-700 mb-4">
+          Every small step counts. Start making a difference today for a better
+          tomorrow.
+        </p>
+        <button
+          id="pledge-button"
+          class="cta-button px-6 py-3 bg-teal-600 text-white rounded-lg shadow-md hover:bg-teal-700"
+          onclick="takePledge()"
+        >
+          Pledge to Help
+        </button>
+        <p id="pledge-message" class="text-lg text-gray-700 mt-4"></p>
+
+        <button
+          id="reset-button"
+          class="cta-button px-6 py-3 bg-red-600 text-white rounded-lg shadow-md hover:bg-red-700 mt-4"
+          onclick="resetPledge()"
+          style="display: none"
+        >
+          Reset 
+        </button>
+      </section>
     <script>
-      const quizData = [
-        {
-          question: "What is the primary cause of global warming?",
-          options: [
-            "Deforestation",
-            "Burning Fossil Fuels",
-            "Volcanic Eruptions"
-          ],
-          correct: 1,
-          funFact: "Burning fossil fuels releases carbon dioxide, the main greenhouse gas."
-        },
-        {
-          question: "Which gas is the most responsible for global warming?",
-          options: ["Oxygen", "Carbon Dioxide", "Nitrogen"], question: "Which gas is the most responsible for global warming?",
-          correct: 1,
-          funFact:
-            "Carbon dioxide traps heat in the atmosphere, causing the greenhouse effect.",
-        },
-        {
-          question: "Which gas is the most responsible for global warming?",
-          options: ["Oxygen", "Carbon Dioxide", "Nitrogen"],
-          options: ["31%", "50%", "10%"],
-          funFact: "Carbon dioxide traps heat in the atmosphere, causing the greenhouse effect."
-        },
-        {
-          question:
-            "What percentage of the Earth's surface is covered by forests?", question:
-          options: ["31%", "50%", "10%"],?",
-          options: ["31%", "50%", "10%"],
-          funFact: "Hydropower accounts for about 60% of global renewable energy production.",
-          funFact: "Forests cover about 31% of the Earth's surface and are vital for absorbing CO2."
-        },
-          question: "Which renewable energy source is the most widely used?",
-          options: ["Solar", "Wind", "Hydropower"],: "Which renewable energy source is the most widely used?",
-          question: "What is the main effect of melting polar ice caps?",
-          options: [
-            "Rising sea levels",
-            "Increased rainfall",
-            "More earthquakes"
-          ],
-          funFact:correct: 2,
-            "Hydropower accounts for about 60% of global renewable energy production.", funFact:
-        },ower accounts for about 60% of global renewable energy production.",
-        {
-        },
-          options: [What is the main effect of melting polar ice caps?",
-          correct: 2,
-          options: [
-            "Rising sea levels",
-            "Increased rainfall",
-            "More earthquakes"
-          ],
-          correct: 0,
-          funFact: "Melting ice caps contribute to rising sea levels, threatening coastal areas."
-        },
-            "Which sector contributes the most to greenhouse gas emissions?", question:
-          options: ["Transportation", "Agriculture", "Energy Production"],
-          correct: 2,, "Energy Production"],
-          funFact:
-            "Energy production is the largest contributor to greenhouse gas emissions globally.",
-        },
-        {
-          question: "How much of the Earth's water is freshwater?",
-          options: ["3%", "10%", "25%"],
-          correct: 0,
-          funFact:
-            "Only 3% of the Earth's water is freshwater, and most of it is frozen in glaciers.",
-        },.",
-        {
-          question: "What is the largest source of renewable energy globally?",
-          options: ["Solar", "Hydropower", "Wind"],bally?",
-          correct: 1,"Solar", "Hydropower", "Wind"],
-          funFact:
-            "Hydropower is the largest source of renewable energy, providing about 60% of global renewable energy.",
-        },rce of renewable energy, providing about 60% of global renewable energy.",
-        {
-          question: "Which country emits the most carbon dioxide?",
-          options: ["India", "China", "United States"],: "Which country emits the most carbon dioxide?",
-          correct: 1,
-          funFact:correct: 1,
-            "China is the largest emitter of carbon dioxide, followed by the United States.",  funFact:
-        },
-        {
-          question: "What is the main purpose of the Paris Agreement?",
-          options: [
-            "To reduce global poverty",
-            "To combat climate change",
-            "To promote renewable energy"
-          ],
-          correct: 1,
-          funFact: "The Paris Agreement aims to limit global warming to below 2°C compared to pre-industrial levels."
-        },
-        {
-          question: "What is the main purpose of the Paris Agreement?",
-          options: [          question: "What is the main purpose of the Paris Agreement?",
-            "To reduce global poverty",
-            "To combat climate change",
-            "To promote renewable energy",
-          ],e energy",
-          correct: 1,
-          funFact:
-            "The Paris Agreement aims to limit global warming to below 2°C compared to pre-industrial levels.",
-        },ims to limit global warming to below 2°C compared to pre-industrial levels.",
-      ];
-
-      let currentQuestionIndex = 0;
-      let score = 0;
-
-      function loadQuestion() {
-        const questionData = quizData[currentQuestionIndex];unction loadQuestion() {
-        document.getElementById("quiz-question").textContent =        const questionData = quizData[currentQuestionIndex];
-          questionData.question;on").textContent =
-        const questionData = quizData[currentQuestionIndex];
-        document.getElementById("quiz-question").textContent = questionData.question;
-          questionData.options[1];        document.getElementById("option2").textContent =
-        document.getElementById("option3").textContent =
-          questionData.options[2];
-        document.getElementById("quiz-result").textContent = "";
-        document.getElementById("fun-fact").textContent = "";        document.getElementById("quiz-result").textContent = "";
-        document.getElementById("next-question").style.display = "none";t = "";
-        updateProgressBar();e.display = "none";
-      }
-
-      function checkAnswer(selectedOption) {
-        const questionData = quizData[currentQuestionIndex];
-        const result = document.getElementById("quiz-result");ndex];
-        const funFact = document.getElementById("fun-fact"); result = document.getElementById("quiz-result");
-lementById("fun-fact");
-        document.getElementById("option1").disabled = true;
-const result = document.getElementById("quiz-result");
-const funFact = document.getElementById("fun-fact");
-        if (selectedOption === questionData.correct) {
-          result.textContent = "Correct! Great job!"; if (selectedOption === questionData.correct) {
-          result.style.color = "green";          result.textContent = "Correct! Great job!";
-          score++;"green";
-        } else {
-          result.textContent = `Incorrect. The correct answer is: ${
-            questionData.options[questionData.correct]is: ${
-          }`;
-          result.style.color = "red";
-        }lor = "red";
-
-        funFact.textContent = `Fun Fact: ${questionData.funFact}`;
-        document.getElementById("quiz-score").textContent = `Score: ${score}`;ata.funFact}`;
-        document.getElementById("next-question").style.display = "block";${score}`;
-      }ock";
-
-      function nextQuestion() {
-        currentQuestionIndex++;stion() {
-        if (currentQuestionIndex < quizData.length) {
-          document.getElementById("option1").disabled = false;
-          document.getElementById("option2").disabled = false;mentById("option1").disabled = false;
-          document.getElementById("option3").disabled = false; document.getElementById("option2").disabled = false;
-          loadQuestion();   document.getElementById("option3").disabled = false;
-        } else {          loadQuestion();
-          document.getElementById("quiz-question").textContent =
-            "You've completed the quiz! Well done!";
-          document.getElementById("option1").style.display = "none";e quiz! Well done!";
-          document.getElementById("option2").style.display = "none";ById("option1").style.display = "none";
-          document.getElementById("option3").style.display = "none";on2").style.display = "none";
-          document.getElementById(   document.getElementById("option3").style.display = "none";
-            "fun-fact"          document.getElementById(
-          ).textContent = `Final Score: ${score}/${quizData.length}`;"
-          document.getElementById("next-question").style.display = "none";          ).textContent = `Final Score: ${score}/${quizData.length}`;
-          completeQuiz();.style.display = "none";
-        }
-      }
-      }
-      function updateProgressBar() {
-        const progress = ((currentQuestionIndex + 1) / quizData.length) * 100;
-        document.getElementById(100;
-          "progress-bar-fill" document.getElementById(
-        ).style.width = `${progress}%`;          "progress-bar-fill"
-      }
-
-      loadQuestion();
-
-      // Initialize pledge count from localStorage
-      let pledgeCount = parseInt(localStorage.getItem("pledgeCount")) || 0;
-      let hasPledged = localStorage.getItem("hasPledged") === "true";eInt(localStorage.getItem("pledgeCount")) || 0;
-age.getItem("hasPledged") === "true";
-      // Update the pledge counter on the page
-      function updatePledgeCounter() {
-        document.getElementById("pledge-count").textContent = pledgeCount;
-      }tent = pledgeCount;
-
-      // Function to handle the pledge button click
-      function takePledge() {      // Function to handle the pledge button click
-        if (!hasPledged) {
-          pledgeCount++;
-          localStorage.setItem("pledgeCount", pledgeCount); // Save to localStorage
-          localStorage.setItem("hasPledged", "true"); // Mark as pledged to localStorage
-          hasPledged = true;pledged
-          updatePledgeCounter();
-          document.getElementById("pledge-button").disabled = true; updatePledgeCounter();
-          document.getElementById("pledge-message").textContent =   document.getElementById("pledge-button").disabled = true;
-            "Thank you for taking the pledge to help our planet!";          document.getElementById("pledge-message").textContent =
-          showConfetti(); // Trigger confetti animation
-        } Trigger confetti animation
-      }
-      }
-      // Disable the pledge button if the user has already pledged
-      function checkPledgeStatus() {
-        if (hasPledged) {
-          document.getElementById("pledge-button").disabled = true;
-          document.getElementById("pledge-message").textContent =
-            "You have already pledged to help our planet. Thank you!";
-        }    "You have already pledged to help our planet. Thank you!";
-      }        }
-
-      // Update the counter and check pledge status when the page loads
-      updatePledgeCounter();d check pledge status when the page loads
-      checkPledgeStatus();
-
       const funFacts = [
-        "The Arctic is warming twice as fast as the rest of the planet.",onst funFacts = [
-        "Burning fossil fuels releases carbon dioxide, the main greenhouse gas.",        "The Arctic is warming twice as fast as the rest of the planet.",
-        "Forests cover about 31% of the Earth's surface and are vital for absorbing CO2.",house gas.",
-        "Hydropower accounts for about 60% of global renewable energy production.",        "Forests cover about 31% of the Earth's surface and are vital for absorbing CO2.",
-        "Melting ice caps contribute to rising sea levels, threatening coastal areas.",ut 60% of global renewable energy production.",
-      ];ibute to rising sea levels, threatening coastal areas.",
+        "The Arctic is warming twice as fast as the rest of the planet.",
+        "Burning fossil fuels releases carbon dioxide, the main greenhouse gas.",
+        "Forests cover about 31% of the Earth's surface and are vital for absorbing CO2.",
+        "Hydropower accounts for about 60% of global renewable energy production.",
+        "Melting ice caps contribute to rising sea levels, threatening coastal areas.",
+      ];
 
       let currentFactIndex = 0;
 
@@ -1110,97 +731,346 @@ age.getItem("hasPledged") === "true";
       }
 
       setInterval(rotateFacts, 5000); // Rotate facts every 5 seconds
-cts, 5000); // Rotate facts every 5 seconds
+
       // Enhanced Confetti Animation
-      function showConfetti() { Confetti Animation
-        const confettiContainer = document.getElementById("confetti-container");unction showConfetti() {
-        for (let i = 0; i < 100; i++) {        const confettiContainer = document.getElementById("confetti-container");
-          const confettiPiece = document.createElement("div");i++) {
+      function showConfetti() {
+        const confettiContainer = document.getElementById("confetti-container");
+        for (let i = 0; i < 100; i++) {
+          const confettiPiece = document.createElement("div");
           confettiPiece.classList.add("confetti-piece");
           confettiPiece.style.left = Math.random() * 100 + "vw"; // Random horizontal position
-          confettiPiece.style.top = Math.random() > 0.5 ? "100vh" : "-10vh"; // Randomly start from top or bottom   confettiPiece.style.left = Math.random() * 100 + "vw"; // Random horizontal position
-          confettiPiece.style.backgroundColor = getRandomColor();          confettiPiece.style.top = Math.random() > 0.5 ? "100vh" : "-10vh"; // Randomly start from top or bottom
-          confettiPiece.style.animationDelay = Math.random() * 3 + "s"; // Random delayackgroundColor = getRandomColor();
-          confettiContainer.appendChild(confettiPiece);.style.animationDelay = Math.random() * 3 + "s"; // Random delay
+          confettiPiece.style.backgroundColor = getRandomColor();
+          confettiPiece.style.animationDelay = Math.random() * 3 + "s"; // Random delay
+          confettiContainer.appendChild(confettiPiece);
         }
-        setTimeout(() => { }
-          confettiContainer.innerHTML = ""; // Clear confetti after animation        setTimeout(() => {
-        }, 3000);L = ""; // Clear confetti after animation
+        setTimeout(() => {
+          confettiContainer.innerHTML = ""; // Clear confetti after animation
+        }, 3000);
       }
 
       function getRandomColor() {
-        const colors = ["#ff6f61", "#ffcc00", "#66b3ff", "#6effb3", "#ff66d9"];tion getRandomColor() {
-        return colors[Math.floor(Math.random() * colors.length)];fcc00", "#66b3ff", "#6effb3", "#ff66d9"];
-      }s.length)];
-
-      function completeQuiz() {
-        showConfetti(); isNaN(carMileage)) {
-        alert("Congratulations! You've completed the quiz!");
-      }");s.";
-
-      // Carbon Footprint Calculator
-      function calculateFootprint() {      // Carbon Footprint Calculator
-        const electricityUsage = parseFloat(
-          document.getElementById("electricity-usage").value parseFloat(
-        );tById("electricity-usage").valueint-result"
-        const carMileage = parseFloat((
-          document.getElementById("car-mileage").valuest carMileage = parseFloat(          2
-        );etElementById("car-mileage").value
- );
-        );
-          document.getElementById("footprint-result").textContent =
-            "Please enter valid numbers for both fields.";seFloat(ion resetPledge() {
-          return;).value.setItem("pledgeCount", 0);
-        }");
-
-        const footprint = electricityUsage * 0.92 + carMileage * 0.79; // Example formulatyUsage) || isNaN(carMileage)) {
-        document.getElementById(yId("footprint-result").textContent =
-          "footprint-result"ed = false;
-        ).textContent = `Your estimated monthly carbon footprint is ${footprint.toFixed(
-          2
-        )} kg CO2.`;
-      } const footprint = electricityUsage * 0.92 + carMileage * 0.79; // Example formula
-        document.getElementById(
-      // Function to reset the pledge counter and status
-      function resetPledge() {d monthly carbon footprint is ${footprint.toFixed(
-        localStorage.setItem("pledgeCount", 0);
-        localStorage.setItem("hasPledged", "false"); reset button
-        pledgeCount = 0;      }
-        hasPledged = false;
-        updatePledgeCounter(); Ctrl + Shift + D)
-        document.getElementById("pledge-button").disabled = false;
-        document.getElementById("pledge-message").textContent = "";
-        document.getElementById("reset-button").style.display = "none"; // Hide the reset buttonsPledged", "false");   enableDeveloperMode();
-        alert("Pledge has been reset!");utton is now visible.");
-      }asPledged = false;
-pdatePledgeCounter();
-      // Function to show the reset button for developersent.getElementById("pledge-button").disabled = false;
-      function enableDeveloperMode() {ocument.getElementById("pledge-message").textContent = "";
-        alert("Pledge has been reset!");
-        resetButton.style.display = "block"; // Show the reset button        alert("Pledge has been reset!");      }      // Function to show the reset button for developers      function enableDeveloperMode() {        const resetButton = document.getElementById("reset-button");
-
-
-
-
-
-
-
-
-
-
-
-
-
-</html>  </body>    </script>      });        }          alert("Developer mode enabled. Reset button is now visible.");          enableDeveloperMode();        if (event.ctrlKey && event.shiftKey && event.key === "V") {      document.addEventListener("keydown", (event) => {      // Listen for a secret key combination (e.g., Ctrl + Shift + D)      }        resetButton.style.display = "block"; // Show the reset button
+        const colors = ["#ff6f61", "#ffcc00", "#66b3ff", "#6effb3", "#ff66d9"];
+        return colors[Math.floor(Math.random() * colors.length)];
       }
 
-      // Listen for a secret key combination (e.g., Ctrl + Shift + D)
+      function completeQuiz() {
+        showConfetti();
+        alert("Congratulations! You've completed the quiz!");
+      }
+
+      const quizData = [
+        {
+          question: "What is the primary cause of global warming?",
+          options: [
+            "Deforestation",
+            "Burning Fossil Fuels",
+            "Volcanic Eruptions",
+          ],
+          correct: 1,
+          funFact:
+            "Burning fossil fuels releases carbon dioxide, the main greenhouse gas.",
+        },
+        {
+          question: "Which gas is the most responsible for global warming?",
+          options: ["Oxygen", "Carbon Dioxide", "Nitrogen"],
+          correct: 1,
+          funFact:
+            "Carbon dioxide traps heat in the atmosphere, causing the greenhouse effect.",
+        },
+        {
+          question:
+            "What percentage of the Earth's surface is covered by forests?",
+          options: ["31%", "50%", "10%"],
+          correct: 0,
+          funFact:
+            "Forests cover about 31% of the Earth's surface and are vital for absorbing CO2.",
+        },
+        {
+          question: "Which renewable energy source is the most widely used?",
+          options: ["Solar", "Wind", "Hydropower"],
+          correct: 2,
+          funFact:
+            "Hydropower accounts for about 60% of global renewable energy production.",
+        },
+        {
+          question: "What is the main effect of melting polar ice caps?",
+          options: [
+            "Rising sea levels",
+            "Increased rainfall",
+            "More earthquakes",
+          ],
+          correct: 0,
+          funFact:
+            "Melting ice caps contribute to rising sea levels, threatening coastal areas.",
+        },
+        {
+          question:
+            "Which sector contributes the most to greenhouse gas emissions?",
+          options: ["Transportation", "Agriculture", "Energy Production"],
+          correct: 2,
+          funFact:
+            "The Arctic is warming twice as fast as the rest of the planet.",
+        },
+        {
+          question: "How much of the Earth's water is freshwater?",
+          options: ["3%", "10%", "25%"],
+          correct: 0,
+          funFact:
+            "Only 3% of the Earth's water is freshwater, and most of it is frozen in glaciers.",
+        },
+        {
+          question: "What is the largest source of renewable energy globally?",
+          options: ["Solar", "Hydropower", "Wind"],
+          correct: 1,
+          funFact:
+            "Hydropower accounts for about 60% of global renewable energy production.",
+        },
+        {
+          question: "Which country emits the most carbon dioxide?",
+          options: ["India", "China", "United States"],
+          correct: 1,
+          funFact:
+            "China is the largest emitter of carbon dioxide, followed by the United States.",
+        },
+        {
+          question: "What is the main purpose of the Paris Agreement?",
+          options: [
+            "To reduce global poverty",
+            "To combat climate change",
+            "To promote renewable energy",
+          ],
+          correct: 1,
+          funFact:
+            "The Paris Agreement aims to limit global warming to below 2°C compared to pre-industrial levels.",
+        },
+      ];
+
+      let currentQuestionIndex = 0;
+      let score = 0;
+
+      function loadQuestion() {
+        const questionData = quizData[currentQuestionIndex];
+        document.getElementById("quiz-question").textContent =
+          questionData.question;
+        document.getElementById("option1").textContent =
+          questionData.options[0];
+        document.getElementById("option2").textContent =
+          questionData.options[1];
+        document.getElementById("option3").textContent =
+          questionData.options[2];
+        document.getElementById("quiz-result").textContent = "";
+        document.getElementById("fun-fact").textContent = "";
+        document.getElementById("next-question").style.display = "none";
+        updateProgressBar();
+      }
+
+      function checkAnswer(selectedOption) {
+        const questionData = quizData[currentQuestionIndex];
+        const result = document.getElementById("quiz-result");
+        const funFact = document.getElementById("fun-fact");
+
+        document.getElementById("option1").disabled = true;
+        document.getElementById("option2").disabled = true;
+        document.getElementById("option3").disabled = true;
+
+        if (selectedOption === questionData.correct) {
+          result.textContent = "Correct! Great job!";
+          result.style.color = "green";
+          score++;
+        } else {
+          result.textContent = `Incorrect. The correct answer is: ${
+            questionData.options[questionData.correct]
+          }`;
+          result.style.color = "red";
+        }
+
+        funFact.textContent = `Fun Fact: ${questionData.funFact}`;
+        document.getElementById("quiz-score").textContent = `Score: ${score}`;
+        document.getElementById("next-question").style.display = "block";
+      }
+
+      function nextQuestion() {
+        currentQuestionIndex++;
+        if (currentQuestionIndex < quizData.length) {
+          document.getElementById("option1").disabled = false;
+          document.getElementById("option2").disabled = false;
+          document.getElementById("option3").disabled = false;
+          loadQuestion();
+        } else {
+          document.getElementById("quiz-question").textContent =
+            "You've completed the quiz! Well done!";
+          document.getElementById("option1").style.display = "none";
+          document.getElementById("option2").style.display = "none";
+          document.getElementById("option3").style.display = "none";
+          document.getElementById(
+            "fun-fact"
+          ).textContent = `Final Score: ${score}/${quizData.length}`;
+          document.getElementById("next-question").style.display = "none";
+          completeQuiz();
+        }
+      }
+
+      function updateProgressBar() {
+        const progress = ((currentQuestionIndex + 1) / quizData.length) * 100;
+        document.getElementById(
+          "progress-bar-fill"
+        ).style.width = `${progress}%`;
+      }
+
+      // Carbon Footprint Calculator
+      function calculateFootprint() {
+        const electricityUsage = parseFloat(
+          document.getElementById("electricity-usage").value
+        );
+        const carMileage = parseFloat(
+          document.getElementById("car-mileage").value
+        );
+
+        if (isNaN(electricityUsage) || isNaN(carMileage)) {
+          document.getElementById("footprint-result").textContent =
+            "Please enter valid numbers for both fields.";
+          return;
+        }
+
+        const footprint = electricityUsage * 0.92 + carMileage * 0.79; // Example formula
+        document.getElementById(
+          "footprint-result"
+        ).textContent = `Your estimated carbon footprint is ${footprint.toFixed(
+          2
+        )} kg CO2.`;
+      }
+
+      // Initialize pledge count from localStorage
+      let pledgeCount = parseInt(localStorage.getItem("pledgeCount")) || 0;
+      let hasPledged = localStorage.getItem("hasPledged") === "true";
+
+      // Update the pledge counter on the page
+      function updatePledgeCounter() {
+        document.getElementById("pledge-count").textContent = pledgeCount;
+      }
+
+      // Function to handle the pledge button click
+      function takePledge() {
+        if (!hasPledged) {
+          pledgeCount++;
+          localStorage.setItem("pledgeCount", pledgeCount); // Save to localStorage
+          localStorage.setItem("hasPledged", "true"); // Mark as pledged
+          hasPledged = true;
+          updatePledgeCounter();
+          document.getElementById("pledge-button").disabled = true;
+          document.getElementById("pledge-message").textContent =
+            "Thank you for taking the pledge to help our planet!";
+          showConfetti(); // Trigger confetti animation
+        }
+      }
+
+      
+      function resetPledge() {
+        // Reset pledge count
+        localStorage.setItem("pledgeCount", 0);
+        localStorage.setItem("hasPledged", "false");
+        pledgeCount = 0;
+        hasPledged = false;
+        updatePledgeCounter();
+
+        // Reset votes
+        votes = {
+          "Renewable Energy": 0,
+          "Reforestation": 0,
+          "Reduce Emissions": 0,
+        };
+        updateVoteDisplay();
+
+        // Reset UI elements
+        document.getElementById("pledge-button").disabled = false;
+        document.getElementById("pledge-message").textContent = "";
+        document.getElementById("reset-button").style.display = "none"; // Hide the reset button
+
+        alert("Pledge and votes have been reset!");
+      }
+
+      // Function to show the reset button for developers
+      function enableDeveloperMode() {
+        const resetButton = document.getElementById("reset-button");
+        resetButton.style.display = "block"; // Show the reset button
+      }
+
+      // Listen for a secret key combination (e.g., Ctrl + Shift + V)
       document.addEventListener("keydown", (event) => {
         if (event.ctrlKey && event.shiftKey && event.key === "V") {
           enableDeveloperMode();
           alert("Developer mode enabled. Reset button is now visible.");
         }
       });
+
+      // Disable the pledge button if the user has already pledged
+      function checkPledgeStatus() {
+        if (hasPledged) {
+          document.getElementById("pledge-button").disabled = true;
+          document.getElementById("pledge-message").textContent =
+            "You have already pledged to help our planet. Thank you!";
+        }
+      }
+
+      // Confetti Animation
+      function showConfetti() {
+        const confettiContainer = document.getElementById("confetti-container");
+        for (let i = 0; i < 100; i++) {
+          const confettiPiece = document.createElement("div");
+          confettiPiece.classList.add("confetti-piece");
+          confettiPiece.style.left = Math.random() * 100 + "vw"; // Random horizontal position
+          confettiPiece.style.top = Math.random() > 0.5 ? "100vh" : "-10vh"; // Randomly start from top or bottom
+          confettiPiece.style.backgroundColor = getRandomColor();
+          confettiPiece.style.animationDelay = Math.random() * 3 + "s"; // Random delay
+          confettiContainer.appendChild(confettiPiece);
+        }
+        setTimeout(() => {
+          confettiContainer.innerHTML = ""; // Clear confetti after animation
+        }, 3000);
+      }
+
+      // Reset pledge counter and check pledge status on page load
+      updatePledgeCounter();
+      checkPledgeStatus();
+
+      loadQuestion();
+      
+      // Initialize vote counts
+      let votes = {
+        "Renewable Energy": 0,
+        "Reforestation": 0,
+        "Reduce Emissions": 0,
+      };
+
+      // Track if the user has already voted
+      let hasVoted = false;
+
+      // Function to handle voting
+      function vote(option) {
+        if (hasVoted) {
+          document.getElementById('poll-result').textContent = "You have already voted. Thank you!";
+          return;
+        }
+
+        if (votes[option] !== undefined) {
+          votes[option]++;
+          updateVoteDisplay();
+          document.getElementById('poll-result').textContent = `Thank you for voting! You chose: ${option}`;
+          hasVoted = true;
+
+          // Disable all voting buttons
+          document.getElementById('renewable-button').disabled = true;
+          document.getElementById('reforestation-button').disabled = true;
+          document.getElementById('emissions-button').disabled = true;
+        }
+      }
+
+      // Function to update the vote display
+      function updateVoteDisplay() {
+        document.getElementById('renewable-votes').textContent = `${votes["Renewable Energy"]} votes`;
+        document.getElementById('reforestation-votes').textContent = `${votes["Reforestation"]} votes`;
+        document.getElementById('emissions-votes').textContent = `${votes["Reduce Emissions"]} votes`;
+      }
     </script>
   </body>
 </html>
