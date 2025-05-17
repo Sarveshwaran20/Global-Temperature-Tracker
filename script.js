@@ -1,6 +1,7 @@
 const API_KEY = "b27a65c44a73a52ecf72f50c632be1ac";
 const API_URL = "https://api.openweathermap.org/data/2.5/weather";
 const FORECAST_API_URL = "https://api.openweathermap.org/data/2.5/forecast";
+const NEWS_API_KEY = "95099bbd8c8145b192193a44211af20e";
 
 // List of predefined cities
 const predefinedCities = [
@@ -585,3 +586,55 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 fetchPredefinedCityTemperatures();
+
+async function fetchClimateNews() {
+  const url = `https://newsapi.org/v2/everything?q=climate OR weather&language=en&sortBy=publishedAt&pageSize=10&apiKey=${NEWS_API_KEY}`;
+  try {
+    const response = await fetch(url);
+    const data = await response.json();
+    if (data.articles && data.articles.length > 0) {
+      displayClimateNews(data.articles);
+    } else {
+      displayClimateNews([]);
+    }
+  } catch (error) {
+    console.error("Error fetching news:", error);
+    displayClimateNews([]);
+  }
+}
+
+function displayClimateNews(articles) {
+  const newsContainer = document.getElementById("climate-news");
+  if (!newsContainer) return;
+  newsContainer.innerHTML = "";
+  if (articles.length === 0) {
+    newsContainer.innerHTML = "<p>No news articles found.</p>";
+    return;
+  }
+  articles.forEach((article) => {
+    const card = document.createElement("div");
+    card.className = "news-card";
+    card.innerHTML = `
+      <img src="${
+        article.urlToImage
+          ? article.urlToImage
+          : "https://via.placeholder.com/300x160?text=No+Image"
+      }" alt="News Image">
+      <div class="news-card-content">
+        <div class="news-card-title">${article.title}</div>
+        <div class="news-card-desc">${
+          article.description ? article.description : ""
+        }</div>
+        <a class="news-card-link" href="${
+          article.url
+        }" target="_blank">Read more</a>
+      </div>
+    `;
+    newsContainer.appendChild(card);
+  });
+}
+
+// Call on page load
+if (document.getElementById("climate-news")) {
+  fetchClimateNews();
+}

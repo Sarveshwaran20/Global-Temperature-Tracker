@@ -113,6 +113,21 @@
           position: static;
           margin-bottom: 10px;
         }
+
+        /* Add these rules for logo and container on small screens */
+        .top-left-logo {
+          width: 60px; /* Make logo smaller */
+          height: 54px; /* Adjust height proportionally or to fit your logo */
+          top: 8px; /* Adjust top position */
+          left: 8px; /* Adjust left position */
+        }
+
+        /* Adjust main container's top padding to prevent overlap with the logo */
+        /* This targets the <div class="container mx-auto p-6"> */
+        .container.mx-auto {
+          padding-top: 70px; /* Logo height (54px) + top (8px) + small buffer (8px) */
+          /* This overrides the top padding from Tailwind's p-6 class */
+        }
       }
 
       @media (max-width: 480px) {
@@ -176,40 +191,59 @@
       .dark-theme td {
         color: #f7fafc; /* Light text for table cells */
       }
+
+      .top-left-logo {
+        position: absolute;
+        top: 10px;
+        left: 20px;
+        width: 70px;
+        height: 70px;
+        object-fit: contain;
+        z-index: 1000;
+      }
     </style>
   </head>
   <body>
+    <img
+      src="logo.png"
+      alt="Global Temperature Tracker Logo"
+      class="top-left-logo"
+    />
     <!-- Main Container -->
     <div class="container mx-auto p-6">
       <h1 class="text-3xl font-bold mb-8 text-center text-teal-700">
         Global Temperature Tracker
       </h1>
-      <div id="button-container" class="flex justify-between mb-6">
-        <!-- Theme Toggle Button -->
-        <button
-          id="theme-toggle-button"
-          class="px-4 py-2 bg-gray-600 text-white rounded-lg shadow-md hover:bg-gray-700"
+      <div
+        id="button-container"
+        class="flex flex-row justify-evenly items-center mb-8 bg-white rounded-lg shadow p-4"
+      >
+        <a
+          href="#"
+          id="theme-toggle-link"
+          class="text-gray-600 hover:text-gray-900 font-semibold transition-colors duration-200"
+          onclick="document.documentElement.classList.toggle('dark-theme'); return false;"
         >
           Toggle Theme
-        </button>
-
-        <!-- Map Button -->
-        <button
-          id="top-right-map-button"
-          onclick="window.location.href='map.html';"
-          class="px-4 py-2 bg-teal-600 text-white rounded-lg shadow-md hover:bg-teal-700"
+        </a>
+        <a
+          href="map.html"
+          class="text-teal-600 hover:text-teal-900 font-semibold transition-colors duration-200"
         >
           View Map
-        </button>
-
-        <!-- Awareness Button -->
-        <button
-          id="awareness-button"
-          onclick="window.location.href='awareness.html';"
-          class="px-4 py-2 bg-gray-600 text-white rounded-lg shadow-md hover:bg-gray-700"
+        </a>
+        <a
+          href="awareness.html"
+          class="text-gray-600 hover:text-gray-900 font-semibold transition-colors duration-200"
         >
           Awareness Page
-        </button>
+        </a>
+        <a
+          href="news.html"
+          class="text-teal-600 hover:text-teal-900 font-semibold transition-colors duration-200"
+        >
+          Climate News
+        </a>
       </div>
       <div class="flex flex-col lg:flex-row gap-8">
         <!-- Left Section -->

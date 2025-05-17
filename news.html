@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Latest Climate News</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background: #f0f4f8;
+        color: #222;
+      }
+      .container {
+        max-width: 900px;
+        margin: 40px auto;
+        background: #fff;
+        padding: 2em;
+        border-radius: 10px;
+        box-shadow: 0 2px 8px #ccc;
+      }
+      h1 {
+        color: #008080;
+        text-align: center;
+      }
+      .news-grid {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+        justify-content: center;
+        margin-top: 2em;
+      }
+      .news-card {
+        background: #fff;
+        border-radius: 10px;
+        box-shadow: 0 2px 8px #ccc;
+        width: 300px;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+      }
+      .news-card img {
+        width: 100%;
+        height: 160px;
+        object-fit: cover;
+      }
+      .news-card-content {
+        padding: 1em;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+      }
+      .news-card-title {
+        font-size: 1.1em;
+        font-weight: bold;
+        margin-bottom: 0.5em;
+        color: #008080;
+      }
+      .news-card-desc {
+        font-size: 0.95em;
+        margin-bottom: 0.5em;
+        color: #333;
+      }
+      .news-card-link {
+        margin-top: auto;
+        color: #0077cc;
+        text-decoration: none;
+        font-weight: bold;
+      }
+      .news-card-link:hover {
+        text-decoration: underline;
+      }
+    </style>
+  </head>
+  <body>
+    <button id="back-button" onclick="goBack()">Back</button>
+    <div class="container">
+      <h1>Latest Climate News Headlines from NewsAPI.org</h1>
+      <div class="news-grid" id="climate-news">
+        <ul>
+          <li>
+            <a
+              href="https://slashdot.org/firehose.pl?op=view&amp;id=177549047"
+              target="_blank"
+              >Tornado Watch for more than half of Lower Michigan, gusts to 80
+              mph, golf ball size hail possible - MLive.com</a
+            >
+          </li>
+          <li>
+            <a
+              href="https://www.thehindubusinessline.com/markets/stock-markets/crompton-greaves-stock-jumps-6-following-q4-profit-growth/article69582573.ece"
+              target="_blank"
+              >Crompton Greaves stock jumps 6% following Q4 profit growth</a
+            >
+          </li>
+          <li>
+            <a
+              href="https://economictimes.indiatimes.com/news/india/india-raises-alarm-as-himalayan-glaciers-melt-calls-for-greater-regional-cooperation/articleshow/121204750.cms"
+              target="_blank"
+              >India raises alarm as Himalayan glaciers melt, calls for greater
+              regional cooperation</a
+            >
+          </li>
+          <li>
+            <a
+              href="https://almostfearless.com/top-7-things-to-look-for-when-hiring-a-contractor-in-miami/"
+              target="_blank"
+              >Top 7 Things to Look for When Hiring a Contractor in Miami</a
+            >
+          </li>
+        </ul>
+      </div>
+      <div class="news-grid" id="climate-news"></div>
+    </div>
+    <script src="script.js"></script>
+  </body>
+</html>
