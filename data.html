@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en" class="bg-teal-100 text-gray-800">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Global Temperature Data</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+      .glow-container {
+        box-shadow: 0 4px 20px rgba(0, 255, 255, 0.6);
+        transition: box-shadow 0.3s ease-in-out;
+      }
+      .glow-container:hover {
+        box-shadow: 0 6px 30px rgba(0, 255, 255, 0.8);
+      }
+      .top-left-logo {
+        position: absolute;
+        top: 10px;
+        left: 20px;
+        width: 70px;
+        height: 70px;
+        object-fit: contain;
+        z-index: 1000;
+      }
+    </style>
+  </head>
+  <body>
+    <img
+      src="logo.png"
+      alt="Global Temperature Tracker Logo"
+      class="top-left-logo"
+    />
+    <div class="container mx-auto p-6">
+      <h1 class="text-3xl font-bold mb-8 text-center text-teal-700">
+        Global Temperature Data (2000–2024)
+      </h1>
+      <div class="mb-6 text-center">
+        <a
+          href="index.html"
+          class="text-teal-600 hover:text-teal-900 font-semibold transition-colors duration-200"
+          >Back to Home</a
+        >
+      </div>
+
+      <!-- Statistics Section -->
+      <div
+        class="bg-white rounded-lg shadow-md border border-gray-300 glow-container p-6 mb-8 flex flex-col md:flex-row justify-around items-center text-center"
+      >
+        <div>
+          <div class="text-2xl font-bold text-teal-700" id="avg-temp">--</div>
+          <div class="text-gray-600">Average Temperature (°C)</div>
+        </div>
+        <div>
+          <div class="text-2xl font-bold text-teal-700" id="max-temp">--</div>
+          <div class="text-gray-600">Max Temperature (°C)</div>
+        </div>
+        <div>
+          <div class="text-2xl font-bold text-teal-700" id="min-temp">--</div>
+          <div class="text-gray-600">Min Temperature (°C)</div>
+        </div>
+      </div>
+
+      <!-- Fun Fact Section -->
+      <div
+        class="bg-white rounded-lg shadow-md border border-gray-300 glow-container p-6 mb-8"
+      >
+        <h2 class="text-xl font-bold mb-2 text-center text-teal-700">
+          Did You Know?
+        </h2>
+        <div id="fun-fact" class="text-center text-gray-700"></div>
+      </div>
+
+      <!-- Chart Section -->
+      <div
+        class="bg-white rounded-lg shadow-md border border-gray-300 glow-container p-6 mb-8"
+      >
+        <h2 class="text-xl font-bold mb-4 text-center text-teal-700">
+          Temperature Trend Chart
+        </h2>
+        <canvas id="temperatureChart" height="80"></canvas>
+      </div>
+
+      <!-- Python Info Section -->
+      <div
+        class="bg-white rounded-lg shadow-md border border-gray-300 glow-container p-6 mb-8"
+      >
+        <h2 class="text-xl font-bold mb-4 text-center text-teal-700">
+          How Was This Data Generated?
+        </h2>
+        <p class="text-gray-700 text-center mb-4">
+          The temperature data shown below was generated using a Python script.
+          Python is a powerful language for data analysis and visualization.
+          Here’s the code that created this dataset:
+        </p>
+        <pre class="bg-gray-100 rounded p-4 text-sm overflow-x-auto"><code>
+import csv
+import random
+
+def generate_temperature_data(filename="global_temperatures.csv", start_year=2000, end_year=2024):
+    with open(filename, mode="w", newline="") as file:
+        writer = csv.writer(file)
+        writer.writerow(["Year", "Temperature"])
+        for year in range(start_year, end_year + 1):
+            temp = round(random.uniform(13.5, 15.0), 2)
+            writer.writerow([year, temp])
+
+if __name__ == "__main__":
+    generate_temperature_data()
+      </code></pre>
+      </div>
+
+      <!-- Data Table Section -->
+      <div
+        class="bg-white rounded-lg shadow-md border border-gray-300 glow-container p-6"
+      >
+        <h2 class="text-xl font-bold mb-4 text-center text-teal-700">
+          Temperature Table
+        </h2>
+        <table
+          id="temperature-table"
+          class="table-auto w-full text-left border-collapse border border-black"
+        >
+          <thead>
+            <tr class="bg-teal-600 text-white">
+              <th class="border border-black p-2 text-center">Year</th>
+              <th class="border border-black p-2 text-center">
+                Temperature (°C)
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Data will be inserted here -->
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Interactive Year Search and Download -->
+      <div
+        class="flex flex-col md:flex-row justify-between items-center mb-8 gap-4"
+      >
+        <div class="flex items-center gap-2">
+          <input
+            type="number"
+            id="year-search"
+            placeholder="Search year (e.g. 1985)"
+            class="border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-teal-400"
+            min="1980"
+            max="2024"
+          />
+          <button
+            id="search-btn"
+            class="bg-teal-600 text-white px-4 py-2 rounded hover:bg-teal-700 transition-colors"
+          >
+            Search
+          </button>
+          <button
+            id="clear-search-btn"
+            class="ml-2 bg-gray-300 text-gray-800 px-3 py-2 rounded hover:bg-gray-400 transition-colors"
+          >
+            Clear
+          </button>
+        </div>
+        <a
+          href="global_temperatures.csv"
+          download
+          class="bg-teal-500 text-white px-4 py-2 rounded hover:bg-teal-700 transition-colors"
+          >Download CSV</a
+        >
+      </div>
+
+      <!-- Temperature Change Indicator -->
+      <div
+        class="bg-white rounded-lg shadow-md border border-gray-300 glow-container p-6 mb-8 flex flex-col items-center"
+      >
+        <h2 class="text-xl font-bold mb-2 text-teal-700">
+          Temperature Change (2000–2024)
+        </h2>
+        <div
+          id="temp-change-indicator"
+          class="text-2xl font-bold flex items-center"
+        ></div>
+      </div>
+
+      <!-- Random Tip/Fact Rotator -->
+      <div
+        class="bg-white rounded-lg shadow-md border border-gray-300 glow-container p-6 mb-8"
+      >
+        <h2 class="text-xl font-bold mb-2 text-teal-700 text-center">
+          Climate Tip
+        </h2>
+        <div id="climate-tip" class="text-center text-gray-700"></div>
+      </div>
+
+      <!-- Scroll to Top Button -->
+      <button
+        id="scrollTopBtn"
+        title="Go to top"
+        class="hidden fixed bottom-8 right-8 bg-teal-600 text-white px-4 py-2 rounded-full shadow-lg hover:bg-teal-800 transition-colors z-50"
+      >
+        ↑ Top
+      </button>
+    </div>
+    <script>
+      // Fetch and display CSV data, and draw chart
+      fetch("global_temperatures.csv")
+        .then((response) => response.text())
+        .then((csv) => {
+          const rows = csv.trim().split("\n");
+          const years = [];
+          const temps = [];
+          const tbody = document.querySelector("#temperature-table tbody");
+          rows.slice(1).forEach((row) => {
+            const cols = row.split(",");
+            years.push(cols[0]);
+            temps.push(parseFloat(cols[1]));
+            const tr = document.createElement("tr");
+            tr.innerHTML = `
+            <td class="border border-black p-2 text-center">${cols[0]}</td>
+            <td class="border border-black p-2 text-center">${cols[1]}</td>
+          `;
+            tbody.appendChild(tr);
+          });
+
+          // Draw Chart
+          const ctx = document
+            .getElementById("temperatureChart")
+            .getContext("2d");
+          new Chart(ctx, {
+            type: "line",
+            data: {
+              labels: years,
+              datasets: [
+                {
+                  label: "Temperature (°C)",
+                  data: temps,
+                  borderColor: "rgba(13, 148, 136, 1)",
+                  backgroundColor: "rgba(13, 148, 136, 0.2)",
+                  fill: true,
+                  tension: 0.2,
+                  pointRadius: 3,
+                  pointBackgroundColor: "rgba(13, 148, 136, 1)",
+                },
+              ],
+            },
+            options: {
+              responsive: true,
+              plugins: {
+                legend: { display: false },
+              },
+              scales: {
+                x: { title: { display: true, text: "Year" } },
+                y: { title: { display: true, text: "Temperature (°C)" } },
+              },
+            },
+          });
+
+          // Calculate statistics
+          const avg = (temps.reduce((a, b) => a + b, 0) / temps.length).toFixed(
+            2
+          );
+          const max = Math.max(...temps);
+          const min = Math.min(...temps);
+          const maxYear = years[temps.indexOf(max)];
+          const minYear = years[temps.indexOf(min)];
+
+          document.getElementById("avg-temp").textContent = avg;
+          document.getElementById(
+            "max-temp"
+          ).textContent = `${max} (${maxYear})`;
+          document.getElementById(
+            "min-temp"
+          ).textContent = `${min} (${minYear})`;
+
+          // Fun fact
+          let trend =
+            temps[temps.length - 1] > temps[0] ? "increased" : "decreased";
+          document.getElementById("fun-fact").textContent =
+            `The hottest year was ${maxYear} (${max}°C), and the coldest was ${minYear} (${min}°C). ` +
+            `On average, the global temperature has ${trend} from ${
+              years[0]
+            } to ${years[years.length - 1]}.`;
+
+          // Temperature change indicator
+          const tempChange =
+            ((temps[temps.length - 1] - temps[0]) / temps[0]) * 100;
+          const tempChangeIndicator = document.getElementById(
+            "temp-change-indicator"
+          );
+          tempChangeIndicator.innerHTML = `
+            ${tempChange.toFixed(2)}%
+            <div class="w-full bg-gray-200 rounded-full h-2.5 mt-2">
+              <div
+                class="bg-teal-600 h-2.5 rounded-full"
+                style="width: ${Math.abs(tempChange)}%"
+              ></div>
+            </div>
+          `;
+
+          // Random climate tip
+          const tips = [
+            "Reduce, reuse, recycle: Minimize waste by following the three R's.",
+            "Conserve water: Every drop counts, fix leaks and reduce water usage.",
+            "Save energy: Turn off lights and unplug devices when not in use.",
+            "Use public transport: Reduce carbon footprint by using buses or trains.",
+            "Plant a tree: Contribute to absorbing CO2 and providing oxygen.",
+          ];
+          const randomTip = tips[Math.floor(Math.random() * tips.length)];
+          document.getElementById("climate-tip").textContent = randomTip;
+
+          // Year search functionality
+          document.getElementById("search-btn").onclick = function () {
+            const year = document.getElementById("year-search").value;
+            const rows = document.querySelectorAll(
+              "#temperature-table tbody tr"
+            );
+            let found = false;
+            rows.forEach((row) => {
+              if (row.children[0].textContent === year) {
+                row.classList.add("bg-yellow-200");
+                found = true;
+                row.scrollIntoView({ behavior: "smooth", block: "center" });
+              } else {
+                row.classList.remove("bg-yellow-200");
+              }
+            });
+            if (!found && year) {
+              alert("Year not found in the data.");
+            }
+          };
+
+          document.getElementById("clear-search-btn").onclick = function () {
+            document.getElementById("year-search").value = "";
+            document
+              .querySelectorAll("#temperature-table tbody tr")
+              .forEach((row) => row.classList.remove("bg-yellow-200"));
+          };
+        });
+
+      // Scroll to top functionality
+      const scrollTopBtn = document.getElementById("scrollTopBtn");
+      window.onscroll = function () {
+        if (
+          document.body.scrollTop > 100 ||
+          document.documentElement.scrollTop > 100
+        ) {
+          scrollTopBtn.classList.remove("hidden");
+        } else {
+          scrollTopBtn.classList.add("hidden");
+        }
+      };
+      scrollTopBtn.addEventListener("click", function () {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      });
+    </script>
+  </body>
+</html>
