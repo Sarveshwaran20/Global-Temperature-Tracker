@@ -7,6 +7,7 @@
     <title>Global Temperature Tracker</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
       body {
         margin-top: 20px;
@@ -369,9 +370,25 @@
     <script>
       // Theme toggle functionality
       const themeToggleButton = document.getElementById("theme-toggle-button");
-      themeToggleButton.addEventListener("click", () => {
-        document.documentElement.classList.toggle("dark-theme");
-      });
+      if (themeToggleButton) {
+        themeToggleButton.addEventListener("click", () => {
+          document.documentElement.classList.toggle("dark-theme");
+        });
+      }
+
+      // Easter egg: Confetti on logo click
+      const logo = document.querySelector(".top-left-logo");
+      if (logo) {
+        logo.style.cursor = "pointer";
+        logo.addEventListener("click", function () {
+          confetti({
+            particleCount: 250,
+            spread: 80,
+            origin: { x: 0.5, y: 0.9 },
+            zIndex: 2000,
+          });
+        });
+      }
     </script>
     <script src="script.js"></script>
   </body>
