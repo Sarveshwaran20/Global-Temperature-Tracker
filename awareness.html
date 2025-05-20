@@ -1044,6 +1044,14 @@ function enableDeveloperMode() {
         });
       // Clear localStorage so user can pledge again after reset
       localStorage.removeItem("hasPledged");
+      hasPledged = false;
+      // Also allow voting again after reset
+      hasVoted = false;
+      document.getElementById("pledge-button").disabled = false;
+      document.getElementById('renewable-button').disabled = false;
+      document.getElementById('reforestation-button').disabled = false;
+      document.getElementById('emissions-button').disabled = false;
+      document.getElementById('poll-result').textContent = "";
       alert("Pledge and votes have been reset!");
     });
       }
