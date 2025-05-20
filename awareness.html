@@ -714,7 +714,9 @@
         </button>
       </section>
     <script>
-      const funFacts = [
+      const API_URL = "http://localhost:5000"; // Change if hosted elsewhere
+
+const funFacts = [
         "The Arctic is warming twice as fast as the rest of the planet.",
         "Burning fossil fuels releases carbon dioxide, the main greenhouse gas.",
         "Forests cover about 31% of the Earth's surface and are vital for absorbing CO2.",
@@ -946,63 +948,107 @@
 
       // Update the pledge counter on the page
       function updatePledgeCounter() {
-        document.getElementById("pledge-count").textContent = pledgeCount;
+        fetch(`${API_URL}/get_pledge`)
+    .then(res => res.json())
+    .then(data => {
+      document.getElementById("pledge-count").textContent = data.count;
+    });
       }
 
       // Function to handle the pledge button click
       function takePledge() {
-        if (!hasPledged) {
-          pledgeCount++;
-          localStorage.setItem("pledgeCount", pledgeCount); // Save to localStorage
-          localStorage.setItem("hasPledged", "true"); // Mark as pledged
-          hasPledged = true;
-          updatePledgeCounter();
-          document.getElementById("pledge-button").disabled = true;
-          document.getElementById("pledge-message").textContent =
-            "Thank you for taking the pledge to help our planet!";
-          showConfetti(); // Trigger confetti animation
-        }
+        fetch(`${API_URL}/take_pledge`, { method: "POST" })
+    .then(res => res.json())
+    .then(data => {
+      updatePledgeCounter();
+      document.getElementById("pledge-button").disabled = true;
+      document.getElementById("pledge-message").textContent =
+        "Thank you for taking the pledge to help our planet!";
+      showConfetti();
+    });
       }
 
-      
+      let developerMode = false;
+
+function enableDeveloperMode() {
+  developerMode = true;
+  const resetButton = document.getElementById("reset-button");
+  resetButton.style.display = "block";
+}
+
+      // --- Voting Backend Integration ---
+      // Remove localStorage for votes, use backend
+
+      // Fetch and update votes from backend
+      function fetchVotes() {
+        fetch(`${API_URL}/get_votes`)
+          .then(res => res.json())
+          .then(data => {
+            votes = data;
+            updateVoteDisplay();
+          });
+      }
+
+      // Update vote display
+      function updateVoteDisplay() {
+        document.getElementById('renewable-votes').textContent = `${votes["Renewable Energy"]} votes`;
+        document.getElementById('reforestation-votes').textContent = `${votes["Reforestation"]} votes`;
+        document.getElementById('emissions-votes').textContent = `${votes["Reduce Emissions"]} votes`;
+      }
+
+      // Track if the user has already voted (session only)
+      let hasVoted = false;
+
+      // Voting function using backend
+      function vote(option) {
+        if (hasVoted) {
+          document.getElementById('poll-result').textContent = "You have already voted. Thank you!";
+          return;
+        }
+        fetch(`${API_URL}/vote`, {
+          method: "POST",
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ option })
+        })
+          .then(res => res.json())
+          .then(data => {
+            votes = data;
+            updateVoteDisplay();
+            document.getElementById('poll-result').textContent = `Thank you for voting! You chose: ${option}`;
+            hasVoted = true;
+            document.getElementById('renewable-button').disabled = true;
+            document.getElementById('reforestation-button').disabled = true;
+            document.getElementById('emissions-button').disabled = true;
+          });
+      }
+
+      // Reset votes in backend
       function resetPledge() {
-        // Reset pledge count
-        localStorage.setItem("pledgeCount", 0);
-        localStorage.setItem("hasPledged", "false");
-        pledgeCount = 0;
-        hasPledged = false;
-        updatePledgeCounter();
-
-        // Reset votes
-        votes = {
-          "Renewable Energy": 0,
-          "Reforestation": 0,
-          "Reduce Emissions": 0,
-        };
-        updateVoteDisplay();
-
-        // Reset UI elements
-        document.getElementById("pledge-button").disabled = false;
-        document.getElementById("pledge-message").textContent = "";
-        document.getElementById("reset-button").style.display = "none"; // Hide the reset button
-
-        alert("Pledge and votes have been reset!");
+        fetch(`${API_URL}/reset_pledge`, { method: "POST" })
+    .then(res => res.json())
+    .then(data => {
+      updatePledgeCounter();
+      document.getElementById("pledge-button").disabled = false;
+      document.getElementById("pledge-message").textContent = "";
+      document.getElementById("reset-button").style.display = "none";
+      // Reset votes globally
+      fetch(`${API_URL}/reset_votes`, { method: "POST" })
+        .then(() => {
+          fetchVotes();
+          document.getElementById('renewable-button').disabled = false;
+          document.getElementById('reforestation-button').disabled = false;
+          document.getElementById('emissions-button').disabled = false;
+          document.getElementById('poll-result').textContent = "";
+          hasVoted = false;
+        });
+      alert("Pledge and votes have been reset!");
+    });
       }
 
-      // Function to show the reset button for developers
-      function enableDeveloperMode() {
-        const resetButton = document.getElementById("reset-button");
-        resetButton.style.display = "block"; // Show the reset button
-      }
-
-      // Listen for a secret key combination (e.g., Ctrl + Shift + V)
-      document.addEventListener("keydown", (event) => {
-        if (event.ctrlKey && event.shiftKey && event.key === "V") {
-          enableDeveloperMode();
-          alert("Developer mode enabled. Reset button is now visible.");
-        }
-      });
-
+      // On page load
+      updatePledgeCounter();
+      fetchVotes();
+      
       // Disable the pledge button if the user has already pledged
       function checkPledgeStatus() {
         if (hasPledged) {
@@ -1042,35 +1088,14 @@
         "Reduce Emissions": 0,
       };
 
-      // Track if the user has already voted
-      let hasVoted = false;
+      document.addEventListener("keydown", (event) => {
+  if (event.ctrlKey && event.shiftKey && (event.key === "V" || event.key === "v")) {
+    console.log("Developer mode enabled");
+    enableDeveloperMode();
+    alert("Developer mode enabled. Reset button is now visible.");
+  }
+});
 
-      // Function to handle voting
-      function vote(option) {
-        if (hasVoted) {
-          document.getElementById('poll-result').textContent = "You have already voted. Thank you!";
-          return;
-        }
-
-        if (votes[option] !== undefined) {
-          votes[option]++;
-          updateVoteDisplay();
-          document.getElementById('poll-result').textContent = `Thank you for voting! You chose: ${option}`;
-          hasVoted = true;
-
-          // Disable all voting buttons
-          document.getElementById('renewable-button').disabled = true;
-          document.getElementById('reforestation-button').disabled = true;
-          document.getElementById('emissions-button').disabled = true;
-        }
-      }
-
-      // Function to update the vote display
-      function updateVoteDisplay() {
-        document.getElementById('renewable-votes').textContent = `${votes["Renewable Energy"]} votes`;
-        document.getElementById('reforestation-votes').textContent = `${votes["Reforestation"]} votes`;
-        document.getElementById('emissions-votes').textContent = `${votes["Reduce Emissions"]} votes`;
-      }
     </script>
   </body>
 </html>
