@@ -116,6 +116,10 @@ def reset_pledge():
     set_pledge_count(0)
     clear_user_pledged()
 
+@app.route('/')
+def index():
+    return "Global Temperature Tracker API is running. See /get_pledge, /get_votes, etc.", 200
+
 @app.route('/get_pledge', methods=['GET'])
 def get_pledge():
     return jsonify({"count": get_pledge_count()})
