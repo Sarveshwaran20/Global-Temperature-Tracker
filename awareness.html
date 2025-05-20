@@ -957,16 +957,17 @@ const funFacts = [
 
       // Function to handle the pledge button click
       function takePledge() {
-        fetch(`${API_URL}/take_pledge`, { method: "POST" })
+  // Disable the button immediately to prevent double clicks
+  document.getElementById("pledge-button").disabled = true;
+  showConfetti();
+  fetch(`${API_URL}/take_pledge`, { method: "POST" })
     .then(res => res.json())
     .then(data => {
       updatePledgeCounter();
-      document.getElementById("pledge-button").disabled = true;
       document.getElementById("pledge-message").textContent =
         "Thank you for taking the pledge to help our planet!";
-      showConfetti();
     });
-      }
+}
 
       let developerMode = false;
 
@@ -1041,6 +1042,8 @@ function enableDeveloperMode() {
           document.getElementById('poll-result').textContent = "";
           hasVoted = false;
         });
+      // Clear localStorage so user can pledge again after reset
+      localStorage.removeItem("hasPledged");
       alert("Pledge and votes have been reset!");
     });
       }
