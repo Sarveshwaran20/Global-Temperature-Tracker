@@ -124,6 +124,11 @@ def index():
 def get_pledge():
     return jsonify({"count": get_pledge_count()})
 
+@app.route('/has_pledged', methods=['GET'])
+def has_pledged_route():
+    user_ip = request.remote_addr
+    return jsonify({"has_pledged": has_user_pledged(user_ip)})
+
 @app.route('/take_pledge', methods=['POST'])
 def take_pledge():
     user_ip = request.remote_addr
@@ -131,7 +136,9 @@ def take_pledge():
         count = get_pledge_count() + 1
         set_pledge_count(count)
         add_user_pledged(user_ip)
-    return jsonify({"count": get_pledge_count()})
+        return jsonify({"success": True, "count": get_pledge_count()})
+    else:
+        return jsonify({"success": False, "count": get_pledge_count()})
 
 @app.route('/reset_pledge', methods=['POST'])
 def reset_pledge_route():

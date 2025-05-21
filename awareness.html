@@ -955,42 +955,38 @@ const funFacts = [
     });
       }
 
-      // Function to handle the pledge button click
-      function takePledge() {
-  // Disable the button immediately to prevent double clicks
-  document.getElementById("pledge-button").disabled = true;
-  showConfetti();
-  fetch(`${API_URL}/take_pledge`, { method: "POST" })
+      // Remove localStorage for pledge/vote logic
+// --- Pledge Logic Fix ---
+// On page load, check if user has already pledged
+function checkPledgeStatus() {
+  fetch(`${API_URL}/has_pledged`)
     .then(res => res.json())
     .then(data => {
-      updatePledgeCounter();
-      document.getElementById("pledge-message").textContent =
-        "Thank you for taking the pledge to help our planet!";
+      if (data.has_pledged) {
+        document.getElementById("pledge-button").disabled = true;
+        document.getElementById("pledge-message").textContent = "You have already taken the pledge. Thank you!";
+      } else {
+        document.getElementById("pledge-button").disabled = false;
+        document.getElementById("pledge-message").textContent = "";
+      }
     });
 }
 
-      let developerMode = false;
-const RESET_PASSWORD = "SK@2008"; 
-const SECURITY_QUESTION = "Favorite car brand?";
-const SECURITY_ANSWER = "dodge charger EV"; // Change this to your answer
-
-function enableDeveloperMode() {
-  // Step 1: Ask for password
-  const password = prompt("Enter the reset password:");
-  if (password !== RESET_PASSWORD) {
-    alert("Incorrect password. Access denied.");
-    return;
-  }
-  // Step 2: Ask security question
-  const answer = prompt(SECURITY_QUESTION);
-  if (!answer || answer.trim().toLowerCase() !== SECURITY_ANSWER.toLowerCase()) {
-    alert("Incorrect answer. Access denied.");
-    return;
-  }
-  // Step 3: Show reset button
-  developerMode = true;
-  const resetButton = document.getElementById("reset-button");
-  resetButton.style.display = "block";
+// Function to handle the pledge button click
+function takePledge() {
+  document.getElementById("pledge-button").disabled = true;
+  fetch(`${API_URL}/take_pledge`, { method: "POST" })
+    .then(res => res.json())
+    .then(data => {
+      if (data.success) {
+        showConfetti();
+        updatePledgeCounter();
+        document.getElementById("pledge-message").textContent = "Thank you for taking the pledge to help our planet!";
+      } else {
+        document.getElementById("pledge-message").textContent = "You have already taken the pledge. Thank you!";
+      }
+      document.getElementById("pledge-button").disabled = true;
+    });
 }
 
       // --- Voting Backend Integration ---
@@ -1078,23 +1074,7 @@ function enableDeveloperMode() {
       // On page load
       updatePledgeCounter();
       fetchVotes();
-      // Always check backend for pledge status, not just localStorage
-      function checkPledgeStatus() {
-        fetch(`${API_URL}/get_pledge`)
-          .then(res => res.json())
-          .then(data => {
-            // Optionally update pledge count here if needed
-            // document.getElementById("pledge-count").textContent = data.count;
-          });
-        fetch(`${API_URL}/take_pledge`, { method: "POST" })
-          .then(res => res.json())
-          .then(data => {
-           
-            document.getElementById("pledge-button").disabled = false;
-            document.getElementById("pledge-message").textContent = "";
-          });
-      }
-
+      checkPledgeStatus();
       // Confetti Animation
       function showConfetti() {
         const confettiContainer = document.getElementById("confetti-container");
