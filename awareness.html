@@ -970,8 +970,24 @@ const funFacts = [
 }
 
       let developerMode = false;
+const RESET_PASSWORD = "SK@2008"; 
+const SECURITY_QUESTION = "Favorite car brand?";
+const SECURITY_ANSWER = "dodge charger EV"; // Change this to your answer
 
 function enableDeveloperMode() {
+  // Step 1: Ask for password
+  const password = prompt("Enter the reset password:");
+  if (password !== RESET_PASSWORD) {
+    alert("Incorrect password. Access denied.");
+    return;
+  }
+  // Step 2: Ask security question
+  const answer = prompt(SECURITY_QUESTION);
+  if (!answer || answer.trim().toLowerCase() !== SECURITY_ANSWER.toLowerCase()) {
+    alert("Incorrect answer. Access denied.");
+    return;
+  }
+  // Step 3: Show reset button
   developerMode = true;
   const resetButton = document.getElementById("reset-button");
   resetButton.style.display = "block";
@@ -1053,20 +1069,30 @@ function enableDeveloperMode() {
       document.getElementById('emissions-button').disabled = false;
       document.getElementById('poll-result').textContent = "";
       alert("Pledge and votes have been reset!");
+      // Hide reset button after reset
+      document.getElementById("reset-button").style.display = "none";
+      developerMode = false;
     });
       }
 
       // On page load
       updatePledgeCounter();
       fetchVotes();
-      
-      // Disable the pledge button if the user has already pledged
+      // Always check backend for pledge status, not just localStorage
       function checkPledgeStatus() {
-        if (hasPledged) {
-          document.getElementById("pledge-button").disabled = true;
-          document.getElementById("pledge-message").textContent =
-            "You have already pledged to help our planet. Thank you!";
-        }
+        fetch(`${API_URL}/get_pledge`)
+          .then(res => res.json())
+          .then(data => {
+            // Optionally update pledge count here if needed
+            // document.getElementById("pledge-count").textContent = data.count;
+          });
+        fetch(`${API_URL}/take_pledge`, { method: "POST" })
+          .then(res => res.json())
+          .then(data => {
+           
+            document.getElementById("pledge-button").disabled = false;
+            document.getElementById("pledge-message").textContent = "";
+          });
       }
 
       // Confetti Animation
