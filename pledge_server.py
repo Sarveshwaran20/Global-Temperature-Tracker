@@ -3,12 +3,15 @@ from flask_cors import CORS
 import json
 import os
 import sqlite3
+import threading
 
 app = Flask(__name__)
 CORS(app)  # Allow cross-origin requests
 
 DB_FILE = 'pledge_vote_data.db'
+JSON_FILE = 'pledge_vote_data.json'
 vote_options = ["Renewable Energy", "Reforestation", "Reduce Emissions"]
+lock = threading.Lock()
 
 def init_db():
     conn = sqlite3.connect(DB_FILE)
@@ -35,7 +38,62 @@ def init_db():
     conn.commit()
     conn.close()
 
+# Utility: Export all data from SQLite to JSON
+
+def export_data_to_json():
+    with lock:
+        conn = sqlite3.connect(DB_FILE)
+        c = conn.cursor()
+        # Pledge count
+        c.execute('SELECT count FROM pledge WHERE id=1')
+        pledge_count = c.fetchone()[0]
+        # User pledged
+        c.execute('SELECT ip FROM user_pledged')
+        user_pledged = [row[0] for row in c.fetchall()]
+        # Votes
+        c.execute('SELECT option, count FROM votes')
+        votes = {row[0]: row[1] for row in c.fetchall()}
+        # Voted users
+        c.execute('SELECT ip FROM voted_users')
+        voted_users = [row[0] for row in c.fetchall()]
+        conn.close()
+        data = {
+            'pledge_count': pledge_count,
+            'user_pledged': user_pledged,
+            'votes': votes,
+            'voted_users': voted_users
+        }
+        with open(JSON_FILE, 'w') as f:
+            json.dump(data, f)
+
+# Utility: Import all data from JSON to SQLite
+
+def import_data_from_json():
+    if not os.path.exists(JSON_FILE):
+        return
+    with lock:
+        with open(JSON_FILE, 'r') as f:
+            data = json.load(f)
+        conn = sqlite3.connect(DB_FILE)
+        c = conn.cursor()
+        # Pledge count
+        c.execute('UPDATE pledge SET count=? WHERE id=1', (data.get('pledge_count', 0),))
+        # User pledged
+        c.execute('DELETE FROM user_pledged')
+        for ip in data.get('user_pledged', []):
+            c.execute('INSERT OR IGNORE INTO user_pledged (ip) VALUES (?)', (ip,))
+        # Votes
+        for option, count in data.get('votes', {}).items():
+            c.execute('UPDATE votes SET count=? WHERE option=?', (count, option))
+        # Voted users
+        c.execute('DELETE FROM voted_users')
+        for ip in data.get('voted_users', []):
+            c.execute('INSERT OR IGNORE INTO voted_users (ip) VALUES (?)', (ip,))
+        conn.commit()
+        conn.close()
+
 init_db()
+import_data_from_json()
 
 def get_pledge_count():
     conn = sqlite3.connect(DB_FILE)
@@ -96,6 +154,7 @@ def reset_votes():
     c.execute('DELETE FROM voted_users')
     conn.commit()
     conn.close()
+    export_data_to_json()
 
 def add_voted_user(ip):
     conn = sqlite3.connect(DB_FILE)
@@ -115,6 +174,7 @@ def has_voted(ip):
 def reset_pledge():
     set_pledge_count(0)
     clear_user_pledged()
+    export_data_to_json()
 
 @app.route('/')
 def index():
@@ -136,6 +196,7 @@ def take_pledge():
         count = get_pledge_count() + 1
         set_pledge_count(count)
         add_user_pledged(user_ip)
+        export_data_to_json()
         return jsonify({"success": True, "count": get_pledge_count()})
     else:
         return jsonify({"success": False, "count": get_pledge_count()})
@@ -159,6 +220,7 @@ def vote():
     if option in vote_options:
         add_vote(option)
         add_voted_user(user_ip)
+        export_data_to_json()
     return jsonify(get_votes())
 
 @app.route('/reset_votes', methods=['POST'])
