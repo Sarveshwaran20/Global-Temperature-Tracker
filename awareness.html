@@ -1113,6 +1113,22 @@ function takePledge() {
   }
 });
 
+function enableDeveloperMode() {
+  // Prompt for password
+  const password = prompt("Enter developer password:");
+  if (password !== "SK@2008") {
+    alert("Incorrect password.");
+    return;
+  }
+  // Prompt for security question
+  const answer = prompt("What is your favorite car brand and model ?");
+  if (!answer || answer.trim() !== "dodge charger EV") {
+    alert("Security question incorrect.");
+    return;
+  }
+  document.getElementById("reset-button").style.display = "inline-block";
+  alert("Developer mode enabled. Reset button is now visible.");
+}
     </script>
   </body>
 </html>
