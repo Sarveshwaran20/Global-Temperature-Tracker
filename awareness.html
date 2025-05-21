@@ -942,6 +942,48 @@ const funFacts = [
         )} kg CO2.`;
       }
 
+      // --- Unique User ID (per device) ---
+function getOrCreateUserId() {
+  const cookieName = 'user_id';
+  let userId = getCookie(cookieName);
+  if (!userId) {
+    userId = generateUUID();
+    setCookie(cookieName, userId, 365);
+  }
+  return userId;
+}
+
+function generateUUID() {
+  // Simple UUID generator
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+    var r = Math.random() * 16 | 0, v = c === 'x' ? r : (r & 0x3 | 0x8);
+    return v.toString(16);
+  });
+}
+
+function setCookie(name, value, days) {
+  let expires = '';
+  if (days) {
+    const date = new Date();
+    date.setTime(date.getTime() + (days*24*60*60*1000));
+    expires = '; expires=' + date.toUTCString();
+  }
+  document.cookie = name + '=' + (value || '')  + expires + '; path=/';
+}
+
+function getCookie(name) {
+  const nameEQ = name + '=';
+  const ca = document.cookie.split(';');
+  for(let i=0;i < ca.length;i++) {
+    let c = ca[i];
+    while (c.charAt(0)==' ') c = c.substring(1,c.length);
+    if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
+  }
+  return null;
+}
+
+const userId = getOrCreateUserId();
+
       // Initialize pledge count from localStorage
       let pledgeCount = parseInt(localStorage.getItem("pledgeCount")) || 0;
       let hasPledged = localStorage.getItem("hasPledged") === "true";
@@ -959,7 +1001,7 @@ const funFacts = [
 // --- Pledge Logic Fix ---
 // On page load, check if user has already pledged
 function checkPledgeStatus() {
-  fetch(`${API_URL}/has_pledged`)
+  fetch(`${API_URL}/has_pledged?user_id=${userId}`)
     .then(res => res.json())
     .then(data => {
       if (data.has_pledged) {
@@ -975,7 +1017,11 @@ function checkPledgeStatus() {
 // Function to handle the pledge button click
 function takePledge() {
   document.getElementById("pledge-button").disabled = true;
-  fetch(`${API_URL}/take_pledge`, { method: "POST" })
+  fetch(`${API_URL}/take_pledge`, {
+    method: "POST",
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ user_id: userId })
+  })
     .then(res => res.json())
     .then(data => {
       if (data.success) {
@@ -989,7 +1035,7 @@ function takePledge() {
     });
 }
 
-      // --- Voting Backend Integration ---
+// --- Voting Backend Integration ---
       // Remove localStorage for votes, use backend
 
       // Fetch and update votes from backend
@@ -1021,7 +1067,7 @@ function takePledge() {
         fetch(`${API_URL}/vote`, {
           method: "POST",
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ option })
+          body: JSON.stringify({ option, user_id: userId })
         })
           .then(res => res.json())
           .then(data => {
@@ -1054,9 +1100,8 @@ function takePledge() {
           document.getElementById('poll-result').textContent = "";
           hasVoted = false;
         });
-      // Clear localStorage so user can pledge again after reset
-      localStorage.removeItem("hasPledged");
-      hasPledged = false;
+      // Remove user_id cookie so user can pledge/vote again after reset
+      setCookie('user_id', '', -1);
       // Also allow voting again after reset
       hasVoted = false;
       document.getElementById("pledge-button").disabled = false;
@@ -1068,6 +1113,8 @@ function takePledge() {
       // Hide reset button after reset
       document.getElementById("reset-button").style.display = "none";
       developerMode = false;
+      // Regenerate userId for new session
+      window.location.reload();
     });
       }
 

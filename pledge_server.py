@@ -1,172 +1,126 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-import json
 import os
-import sqlite3
+import psycopg2
+from psycopg2.extras import RealDictCursor
 import threading
 
 app = Flask(__name__)
 CORS(app)  # Allow cross-origin requests
 
-DB_FILE = 'pledge_vote_data.db'
-JSON_FILE = 'pledge_vote_data.json'
+# PostgreSQL connection setup
+PG_CONN_STR = os.environ.get('DATABASE_URL', 'postgresql://user:password@localhost:5432/pledgedb')
+
+def get_db_conn():
+    return psycopg2.connect(PG_CONN_STR, cursor_factory=RealDictCursor)
+
 vote_options = ["Renewable Energy", "Reforestation", "Reduce Emissions"]
 lock = threading.Lock()
 
+# Initialize DB tables (PostgreSQL)
 def init_db():
-    conn = sqlite3.connect(DB_FILE)
+    conn = get_db_conn()
     c = conn.cursor()
-    # Pledge table
     c.execute('''CREATE TABLE IF NOT EXISTS pledge (
-        id INTEGER PRIMARY KEY, count INTEGER DEFAULT 0
+        id SERIAL PRIMARY KEY, count INTEGER DEFAULT 0
     )''')
-    c.execute('''INSERT OR IGNORE INTO pledge (id, count) VALUES (1, 0)''')
-    # User pledged table
+    c.execute('''INSERT INTO pledge (id, count) VALUES (1, 0) ON CONFLICT (id) DO NOTHING''')
     c.execute('''CREATE TABLE IF NOT EXISTS user_pledged (
-        ip TEXT PRIMARY KEY
+        user_id TEXT PRIMARY KEY
     )''')
-    # Votes table
     c.execute('''CREATE TABLE IF NOT EXISTS votes (
         option TEXT PRIMARY KEY, count INTEGER DEFAULT 0
     )''')
     for option in vote_options:
-        c.execute('''INSERT OR IGNORE INTO votes (option, count) VALUES (?, 0)''', (option,))
-    # Voted users table
+        c.execute('''INSERT INTO votes (option, count) VALUES (%s, 0) ON CONFLICT (option) DO NOTHING''', (option,))
     c.execute('''CREATE TABLE IF NOT EXISTS voted_users (
-        ip TEXT PRIMARY KEY
+        user_id TEXT PRIMARY KEY
     )''')
     conn.commit()
     conn.close()
 
-# Utility: Export all data from SQLite to JSON
-
-def export_data_to_json():
-    with lock:
-        conn = sqlite3.connect(DB_FILE)
-        c = conn.cursor()
-        # Pledge count
-        c.execute('SELECT count FROM pledge WHERE id=1')
-        pledge_count = c.fetchone()[0]
-        # User pledged
-        c.execute('SELECT ip FROM user_pledged')
-        user_pledged = [row[0] for row in c.fetchall()]
-        # Votes
-        c.execute('SELECT option, count FROM votes')
-        votes = {row[0]: row[1] for row in c.fetchall()}
-        # Voted users
-        c.execute('SELECT ip FROM voted_users')
-        voted_users = [row[0] for row in c.fetchall()]
-        conn.close()
-        data = {
-            'pledge_count': pledge_count,
-            'user_pledged': user_pledged,
-            'votes': votes,
-            'voted_users': voted_users
-        }
-        with open(JSON_FILE, 'w') as f:
-            json.dump(data, f)
-
-# Utility: Import all data from JSON to SQLite
-
-def import_data_from_json():
-    if not os.path.exists(JSON_FILE):
-        return
-    with lock:
-        with open(JSON_FILE, 'r') as f:
-            data = json.load(f)
-        conn = sqlite3.connect(DB_FILE)
-        c = conn.cursor()
-        # Pledge count
-        c.execute('UPDATE pledge SET count=? WHERE id=1', (data.get('pledge_count', 0),))
-        # User pledged
-        c.execute('DELETE FROM user_pledged')
-        for ip in data.get('user_pledged', []):
-            c.execute('INSERT OR IGNORE INTO user_pledged (ip) VALUES (?)', (ip,))
-        # Votes
-        for option, count in data.get('votes', {}).items():
-            c.execute('UPDATE votes SET count=? WHERE option=?', (count, option))
-        # Voted users
-        c.execute('DELETE FROM voted_users')
-        for ip in data.get('voted_users', []):
-            c.execute('INSERT OR IGNORE INTO voted_users (ip) VALUES (?)', (ip,))
-        conn.commit()
-        conn.close()
-
 init_db()
-import_data_from_json()
 
+# --- DB Utility Functions ---
 def get_pledge_count():
-    conn = sqlite3.connect(DB_FILE)
+    conn = get_db_conn()
     c = conn.cursor()
     c.execute('SELECT count FROM pledge WHERE id=1')
-    count = c.fetchone()[0]
+    count = c.fetchone()['count']
     conn.close()
     return count
 
 def set_pledge_count(count):
-    conn = sqlite3.connect(DB_FILE)
+    conn = get_db_conn()
     c = conn.cursor()
-    c.execute('UPDATE pledge SET count=? WHERE id=1', (count,))
+    c.execute('UPDATE pledge SET count=%s WHERE id=1', (count,))
     conn.commit()
     conn.close()
 
-def add_user_pledged(ip):
-    conn = sqlite3.connect(DB_FILE)
+def add_user_pledged(user_id):
+    if not user_id:
+        return
+    conn = get_db_conn()
     c = conn.cursor()
-    c.execute('INSERT OR IGNORE INTO user_pledged (ip) VALUES (?)', (ip,))
+    c.execute('INSERT INTO user_pledged (user_id) VALUES (%s) ON CONFLICT (user_id) DO NOTHING', (user_id,))
     conn.commit()
     conn.close()
 
 def clear_user_pledged():
-    conn = sqlite3.connect(DB_FILE)
+    conn = get_db_conn()
     c = conn.cursor()
     c.execute('DELETE FROM user_pledged')
     conn.commit()
     conn.close()
 
-def has_user_pledged(ip):
-    conn = sqlite3.connect(DB_FILE)
+def has_user_pledged(user_id):
+    if not user_id:
+        return False
+    conn = get_db_conn()
     c = conn.cursor()
-    c.execute('SELECT 1 FROM user_pledged WHERE ip=?', (ip,))
+    c.execute('SELECT 1 FROM user_pledged WHERE user_id=%s', (user_id,))
     result = c.fetchone()
     conn.close()
     return result is not None
 
 def get_votes():
-    conn = sqlite3.connect(DB_FILE)
+    conn = get_db_conn()
     c = conn.cursor()
     c.execute('SELECT option, count FROM votes')
-    votes = {row[0]: row[1] for row in c.fetchall()}
+    votes = {row['option']: row['count'] for row in c.fetchall()}
     conn.close()
     return votes
 
 def add_vote(option):
-    conn = sqlite3.connect(DB_FILE)
+    conn = get_db_conn()
     c = conn.cursor()
-    c.execute('UPDATE votes SET count = count + 1 WHERE option=?', (option,))
+    c.execute('UPDATE votes SET count = count + 1 WHERE option=%s', (option,))
     conn.commit()
     conn.close()
 
 def reset_votes():
-    conn = sqlite3.connect(DB_FILE)
+    conn = get_db_conn()
     c = conn.cursor()
     c.execute('UPDATE votes SET count=0')
     c.execute('DELETE FROM voted_users')
     conn.commit()
     conn.close()
-    export_data_to_json()
 
-def add_voted_user(ip):
-    conn = sqlite3.connect(DB_FILE)
+def add_voted_user(user_id):
+    if not user_id:
+        return
+    conn = get_db_conn()
     c = conn.cursor()
-    c.execute('INSERT OR IGNORE INTO voted_users (ip) VALUES (?)', (ip,))
+    c.execute('INSERT INTO voted_users (user_id) VALUES (%s) ON CONFLICT (user_id) DO NOTHING', (user_id,))
     conn.commit()
     conn.close()
 
-def has_voted(ip):
-    conn = sqlite3.connect(DB_FILE)
+def has_voted(user_id):
+    if not user_id:
+        return False
+    conn = get_db_conn()
     c = conn.cursor()
-    c.execute('SELECT 1 FROM voted_users WHERE ip=?', (ip,))
+    c.execute('SELECT 1 FROM voted_users WHERE user_id=%s', (user_id,))
     result = c.fetchone()
     conn.close()
     return result is not None
@@ -174,7 +128,6 @@ def has_voted(ip):
 def reset_pledge():
     set_pledge_count(0)
     clear_user_pledged()
-    export_data_to_json()
 
 @app.route('/')
 def index():
@@ -186,17 +139,21 @@ def get_pledge():
 
 @app.route('/has_pledged', methods=['GET'])
 def has_pledged_route():
-    user_ip = request.remote_addr
-    return jsonify({"has_pledged": has_user_pledged(user_ip)})
+    user_id = request.args.get('user_id')
+    if not user_id:
+        return jsonify({"error": "Missing user_id"}), 400
+    return jsonify({"has_pledged": has_user_pledged(user_id)})
 
 @app.route('/take_pledge', methods=['POST'])
 def take_pledge():
-    user_ip = request.remote_addr
-    if not has_user_pledged(user_ip):
+    data = request.get_json()
+    user_id = data.get('user_id') if data else None
+    if not user_id:
+        return jsonify({"success": False, "error": "Missing user_id"}), 400
+    if not has_user_pledged(user_id):
         count = get_pledge_count() + 1
         set_pledge_count(count)
-        add_user_pledged(user_ip)
-        export_data_to_json()
+        add_user_pledged(user_id)
         return jsonify({"success": True, "count": get_pledge_count()})
     else:
         return jsonify({"success": False, "count": get_pledge_count()})
@@ -212,15 +169,16 @@ def get_votes_route():
 
 @app.route('/vote', methods=['POST'])
 def vote():
-    user_ip = request.remote_addr
-    if has_voted(user_ip):
-        return jsonify(get_votes())
     data = request.get_json()
-    option = data.get('option')
+    user_id = data.get('user_id') if data else None
+    option = data.get('option') if data else None
+    if not user_id:
+        return jsonify({"error": "Missing user_id"}), 400
+    if has_voted(user_id):
+        return jsonify(get_votes())
     if option in vote_options:
         add_vote(option)
-        add_voted_user(user_ip)
-        export_data_to_json()
+        add_voted_user(user_id)
     return jsonify(get_votes())
 
 @app.route('/reset_votes', methods=['POST'])
